@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/home/rogvold/Documents/GitHub/CardioDataCore/src/java/com/cardiodata/core/jpa/User.java</file>
-        <file>file:/home/rogvold/Documents/GitHub/CardioDataCore/src/java/com/cardiodata/enums/AccountStatusEnum.java</file>
-        <file>file:/home/rogvold/Documents/GitHub/CardioDataCore/src/java/com/cardiodata/core/jpa/UserAccount.java</file>
-        <file>file:/home/rogvold/Documents/GitHub/CardioDataCore/src/java/com/cardiodata/core/jpa/ApiToken.java</file>
-        <file>file:/home/rogvold/Documents/GitHub/CardioDataCore/src/java/com/cardiodata/exceptions/CardioDataException.java</file>
-        <file>file:/home/rogvold/Documents/GitHub/CardioDataCore/src/java/com/cardiodata/json/JsonError.java</file>
-        <file>file:/home/rogvold/Documents/GitHub/CardioDataCore/src/java/com/cardiodata/json/SimpleResponseWrapper.java</file>
-    </open-files>
 </project-private>

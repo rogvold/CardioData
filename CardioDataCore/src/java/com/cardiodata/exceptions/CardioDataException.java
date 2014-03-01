@@ -1,5 +1,7 @@
 package com.cardiodata.exceptions;
 
+import com.cardiodata.json.ResponseConstants;
+
 
 /**
  *
