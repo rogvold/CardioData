@@ -4,6 +4,7 @@ import com.cardiodata.core.jpa.CardioSession;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.*;
 import com.cardiodata.managers.CardioSessionManagerLocal;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
@@ -26,6 +27,7 @@ public class CardioSessionResource {
     @EJB
     TokenManagerLocal tokenMan;
 
+    //tested
     @POST
     @Produces("application/json")
     @Consumes("application/json")
@@ -35,6 +37,22 @@ public class CardioSessionResource {
             tokenMan.assertToken(userId, token);
             CardioSession cs = cardMan.createCardioSession(userId, serverId);
             JsonResponse<CardioSession> jr = new JsonResponse<CardioSession>(ResponseConstants.OK, cs);
+            return SimpleResponseWrapper.getJsonResponse(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapException(e);
+        }
+    }
+
+    //tested
+    @POST
+    @Produces("application/json")
+    @Consumes("application/json")
+    @Path("getCardioSessionsOfUser")
+    public String getCardioSessionsOfUser(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId) {
+        try {
+            tokenMan.assertToken(userId, token);
+            List<CardioSession> list = cardMan.getCardioSessionsOfUser(userId, serverId);
+            JsonResponse<List<CardioSession>> jr = new JsonResponse<List<CardioSession>>(ResponseConstants.OK, list);
             return SimpleResponseWrapper.getJsonResponse(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapException(e);

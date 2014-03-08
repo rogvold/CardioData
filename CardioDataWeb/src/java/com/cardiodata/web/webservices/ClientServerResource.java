@@ -33,6 +33,7 @@ public class ClientServerResource {
     public ClientServerResource() {
     }
 
+    
     @POST
     @Produces("application/json")
     @Consumes("application/json")

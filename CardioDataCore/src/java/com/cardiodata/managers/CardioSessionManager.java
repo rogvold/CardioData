@@ -131,7 +131,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 
     @Override
     public List<CardioSession> getCardioSessionsOfUser(Long userId, Long serverId) throws CardioDataException {
-        Query q = em.createQuery("select c from CardioSession c where c.userId = :userId and c.serverId = : serverId").setParameter("userId", userId).setParameter("serverId", serverId);
+        Query q = em.createQuery("select c from CardioSession c where c.userId = :userId and c.serverId = :serverId").setParameter("userId", userId).setParameter("serverId", serverId);
         List<CardioSession> list = q.getResultList();
         if (list == null || list.isEmpty()) {
             return Collections.EMPTY_LIST;

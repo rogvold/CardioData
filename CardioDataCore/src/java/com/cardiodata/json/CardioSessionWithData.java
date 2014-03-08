@@ -5,7 +5,6 @@ import com.cardiodata.core.jpa.CardioSession;
 import java.util.List;
 
 /**
- *
  * @author Shaykhlislamov Sabir (email: sha-sabir@yandex.ru)
  */
 public class CardioSessionWithData extends CardioSession {
