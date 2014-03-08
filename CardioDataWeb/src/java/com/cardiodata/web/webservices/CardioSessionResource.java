@@ -75,6 +75,7 @@ public class CardioSessionResource {
         }
     }
 
+    //tested
     @POST
     @Produces("application/json")
     @Consumes("application/json")

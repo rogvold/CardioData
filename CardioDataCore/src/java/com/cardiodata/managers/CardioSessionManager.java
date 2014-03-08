@@ -113,6 +113,8 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 
     @Override
     public void saveCardioSessionData(String jsonIncomingData) throws CardioDataException {
+        System.out.println("saveCardioSessionData occured");
+        System.out.println("jsonIncomingData = " + jsonIncomingData);
         CardioSessionWithData cw = (new Gson()).fromJson(jsonIncomingData, CardioSessionWithData.class);
         Long sessionId = cw.getId();
         if (sessionId == null) {
@@ -122,9 +124,35 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         }
         cw.setId(sessionId);
         List<CardioDataItem> dataItems = cw.getDataItems();
+        CardioSession session = getCardioSessionById(sessionId);
+        session.setDataClassName(cw.getDataClassName());
+        em.merge(session);
         long n = 0;
         for (CardioDataItem cdi : dataItems) {
             CardioDataItem ci = new CardioDataItem(cdi.getDataItem(), sessionId, n, cdi.getCreationTimestamp());
+            em.merge(ci);
+            n++;
+        }
+    }
+
+    @Override
+    public void appendCardioSessionData(String jsonIncomingData) throws CardioDataException {
+        System.out.println("appendCardioSessionData occured");
+        System.out.println("jsonIncomingData = " + jsonIncomingData);
+        CardioSessionWithData cw = (new Gson()).fromJson(jsonIncomingData, CardioSessionWithData.class);
+        Long sessionId = cw.getId();
+        if (sessionId == null) {
+            CardioSession c = new CardioSession();
+            c = em.merge(c);
+            sessionId = c.getId();
+        }
+        cw.setId(sessionId);
+        CardioSession session = getCardioSessionById(sessionId);
+        session.setDataClassName(cw.getDataClassName());
+        em.merge(session);
+        List<CardioDataItem> dataItems = cw.getDataItems();
+        for (CardioDataItem cdi : dataItems) {
+            CardioDataItem ci = new CardioDataItem(cdi.getDataItem(), sessionId, cdi.getNumber(), cdi.getCreationTimestamp());
             em.merge(ci);
         }
     }

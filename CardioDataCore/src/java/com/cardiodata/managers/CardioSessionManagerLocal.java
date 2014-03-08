@@ -29,6 +29,8 @@ public interface CardioSessionManagerLocal {
     
     public void saveCardioSessionData(String jsonIncomingData) throws CardioDataException;
     
+    public void appendCardioSessionData(String jsonIncomingData) throws CardioDataException;
+    
     public List<CardioSession> getCardioSessionsOfUser(Long userId, Long serverId) throws CardioDataException;
     
     public boolean isSessionOfUser(Long userId, Long sessionId) throws CardioDataException;

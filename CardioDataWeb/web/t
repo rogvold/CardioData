@@ -1,0 +1,3 @@
+"{"id":151,"serverId":51,"dataClassName":"JsonRRInterval","dataItems":[{"sessionId":151,"number":0,"creationTimestamp":123,"dataItem":"{r: 555}"},{"sessionId":151,"number":1,"creationTimestamp":456,"dataItem":"{r: 666}"}]}"
+
+"{\"id\":151,\"serverId\":51,\"dataClassName\":\"JsonRRInterval\",\"dataItems\":[{\"sessionId\":151,\"number\":0,\"creationTimestamp\":123,\"dataItem\":\"{r: 555}\"},{\"sessionId\":151,\"number\":1,\"creationTimestamp\":456,\"dataItem\":\"{r: 666}\"}]}"
