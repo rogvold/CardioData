@@ -7,6 +7,7 @@ import com.cardiodata.json.CardioSessionWithData;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -31,17 +32,17 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         CardioSession cs = new CardioSession();
         cs.setUserId(userId);
         cs.setServerId(serverId);
+        cs.setCreationTimestamp((new Date()).getTime());
         return em.merge(cs);
     }
 
     @Override
     public CardioSession createCardioSession(CardioSession cs) throws CardioDataException {
         CardioSession csess = createCardioSession(cs.getUserId(), cs.getServerId());
-        csess.setCreationTimestamp(cs.getCreationTimestamp());
         csess.setDataClassName(cs.getDataClassName());
         csess.setDescription(cs.getDescription());
         csess.setName(cs.getName());
-        return csess;
+        return em.merge(csess);
     }
 
     @Override
@@ -49,6 +50,20 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         if (cs.getId() == null) {
             throw new CardioDataException("cs id is null");
         }
+        return em.merge(cs);
+    }
+
+    @Override
+    public CardioSession updateCardioSession(Long sessionId, String newName, String newDescription) throws CardioDataException {
+        if (sessionId == null){
+            throw new CardioDataException("sessionId is null");
+        }
+        CardioSession cs = getCardioSessionById(sessionId);
+        if (newName == null || "".equals(newName)) {
+            throw new CardioDataException("new name is empty");
+        }
+        cs.setName(newName);
+        cs.setDescription(newDescription);
         return em.merge(cs);
     }
 

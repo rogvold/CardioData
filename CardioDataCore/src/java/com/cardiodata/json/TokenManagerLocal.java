@@ -11,7 +11,10 @@ import javax.ejb.Local;
 @Local
 public interface TokenManagerLocal {
 
-    public ApiToken refreshUserToken(Long userId) throws CardioDataException;
+//    public ApiToken refreshUserToken(Long userId) throws CardioDataException;
+    public void assertToken(Long userId, String tokenString) throws CardioDataException;
+    
+    public ApiToken getCurrentToken(Long userId) throws CardioDataException;
     
     public ApiToken getTokenById(Long tokenId) throws CardioDataException;
     

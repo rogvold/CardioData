@@ -28,9 +28,20 @@ public class UserManager implements UserManagerLocal {
 
     @PersistenceContext(unitName = "CardioDataCorePU")
     EntityManager em;
-    
     @EJB
     TokenManagerLocal tokenMan;
+
+    private boolean userExists(String email) throws CardioDataException {
+        if (email == null || "".equals(email)) {
+            throw new CardioDataException("email is not specified");
+        }
+        Query q = em.createQuery("select u from User u where u.email = :email").setParameter("email", email);
+        List<User> list = q.getResultList();
+        if (list == null || list.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public User loginUser(AccountTypeEnum aType, String login, String password) throws CardioDataException {
@@ -103,11 +114,23 @@ public class UserManager implements UserManagerLocal {
         return list.get(0);
     }
 
+    private UserAccount getAccount(AccountTypeEnum aType, String login) throws CardioDataException {
+        Query q = null;
+        String jpql = "select ua from UserAccount ua where ua.accountType = :type and ua.login = :login";
+        q = em.createQuery(jpql).setParameter("type", aType).setParameter("login", login);
+        List<UserAccount> list = q.getResultList();
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+
     @Override
     public User registerUser(AccountTypeEnum aType, String login, String password) throws CardioDataException {
-        if (loginUser(aType, login, password) != null) {
-            throw new CardioDataException("user with specified login/passwrod has been alterady registered in the system", ResponseConstants.REGISTRATION_FAILED_CODE);
+        if (getAccount(aType, login) != null) {
+            throw new CardioDataException("user with specified login has been alterady registered in the system", ResponseConstants.REGISTRATION_FAILED_CODE);
         }
+
         User u = new User();
         u.setRegistrationDate((new Date()).getTime());
         u.setLastLoginDate((new Date()).getTime());

@@ -20,8 +20,7 @@ public class TokenManager implements TokenManagerLocal {
     @PersistenceContext(unitName = "CardioDataCorePU")
     EntityManager em;
 
-    @Override
-    public ApiToken refreshUserToken(Long userId) throws CardioDataException {
+    private ApiToken refreshUserToken(Long userId) throws CardioDataException {
         ApiToken token = getTokenByUserId(userId);
         if (token == null) {
             Long expStamp = (new Date()).getTime() + ApiToken.EXPIRATION_TIME;
@@ -32,6 +31,28 @@ public class TokenManager implements TokenManagerLocal {
         Long eStamp = token.getExpirationDate() + ApiToken.EXPIRATION_TIME;
         token.setExpirationDate(eStamp);
         return em.merge(token);
+    }
+
+    @Override
+    public ApiToken getCurrentToken(Long userId) throws CardioDataException {
+        if (userId == null) {
+            throw new CardioDataException("userId is not specified");
+        }
+        ApiToken token = getTokenByUserId(userId);
+        if (token == null) {
+            Long expStamp = (new Date()).getTime() + ApiToken.EXPIRATION_TIME;
+            token = new ApiToken(userId, generateApiTokenString(), expStamp);
+            token = em.merge(token);
+            return token;
+        }
+        Long now = (new Date()).getTime();
+        if (now - token.getExpirationDate() >= ApiToken.EXPIRATION_TIME) {
+            Long expStamp = (new Date()).getTime() + ApiToken.EXPIRATION_TIME;
+            token.setExpirationDate(expStamp);
+            token.setToken(StringUtils.generateRandomString(ApiToken.TOKEN_LENGTH));
+            return em.merge(token);
+        }
+        return token;
     }
 
     @Override
@@ -58,11 +79,11 @@ public class TokenManager implements TokenManagerLocal {
     @Override
     public boolean isExpiredApiToken(Long tokenId) throws CardioDataException {
         ApiToken token = getTokenById(tokenId);
-        if (token == null){
+        if (token == null) {
             throw new CardioDataException("can not find token with id = " + tokenId);
         }
         Long now = (new Date()).getTime();
-        if ( now - token.getExpirationDate() >= ApiToken.EXPIRATION_TIME ){
+        if (now - token.getExpirationDate() >= ApiToken.EXPIRATION_TIME) {
             return true;
         }
         return false;
@@ -70,5 +91,19 @@ public class TokenManager implements TokenManagerLocal {
 
     private String generateApiTokenString() {
         return StringUtils.generateRandomString(ApiToken.TOKEN_LENGTH);
+    }
+
+    @Override
+    public void assertToken(Long userId, String tokenString) throws CardioDataException {
+        if (tokenString == null) {
+            throw new CardioDataException("token is not specified");
+        }
+        ApiToken token = getTokenByUserId(userId);
+        if (isExpiredApiToken(token.getId())) {
+            throw new CardioDataException("token is expired", ResponseConstants.INVALID_TOKEN_CODE);
+        }
+        if (!tokenString.equals(token.getToken())) {
+            throw new CardioDataException("token is not valid");
+        }
     }
 }
