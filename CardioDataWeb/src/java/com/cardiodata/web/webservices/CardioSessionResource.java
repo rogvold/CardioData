@@ -78,6 +78,21 @@ public class CardioSessionResource {
     @POST
     @Produces("application/json")
     @Consumes("application/json")
+    @Path("appendDataToCardioSession")
+    public String appendDataToCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serializedData") String serializedData) {
+        try {
+            tokenMan.assertToken(userId, token);
+            cardMan.saveCardioSessionData(serializedData);
+            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
+            return SimpleResponseWrapper.getJsonResponse(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapException(e);
+        }
+    }
+
+    @POST
+    @Produces("application/json")
+    @Consumes("application/json")
     @Path("updateCardioSessionInfo")
     public String updateCardioSessionInfo(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId, @FormParam("name") String name, @FormParam("description") String description) {
         try {
