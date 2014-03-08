@@ -33,10 +33,11 @@ public class ClientServerResource {
     public ClientServerResource() {
     }
 
-    @GET
+    @POST
     @Produces("application/json")
+    @Consumes("application/json")
     @Path("getServer")
-    public String getClientServer(@QueryParam("serverId") Long serverId) {
+    public String getClientServer(@FormParam("serverId") Long serverId) {
         try {
             if (serverId == null) {
                 throw new CardioDataException("serverId is not defined");
@@ -51,6 +52,7 @@ public class ClientServerResource {
 
     @POST
     @Produces("application/json")
+    @Consumes("application/json")
     @Path("createClientServer")
     public String createClientServer(@FormParam("name") String name) {
         try {
@@ -64,6 +66,7 @@ public class ClientServerResource {
 
     @POST
     @Produces("application/json")
+    @Consumes("application/json")
     @Path("updateClientServer")
     public String updateClientServer(@FormParam("serverId") Long serverId, @FormParam("name") String name) {
         try {
@@ -77,7 +80,4 @@ public class ClientServerResource {
             return CardioDataExceptionWrapper.wrapException(e);
         }
     }
-    
-    
-    
 }

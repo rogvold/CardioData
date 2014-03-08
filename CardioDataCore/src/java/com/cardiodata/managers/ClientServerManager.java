@@ -2,7 +2,6 @@ package com.cardiodata.managers;
 
 import com.cardiodata.core.jpa.ClientServer;
 import com.cardiodata.exceptions.CardioDataException;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -22,7 +21,14 @@ public class ClientServerManager implements ClientServerManagerLocal {
 
     @Override
     public ClientServer getClientServerById(Long cId) throws CardioDataException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (cId == null) {
+            throw new CardioDataException("client server id is not defined");
+        }
+        ClientServer c = em.find(ClientServer.class, cId);
+        if (c == null) {
+            throw new CardioDataException("client server with specified id is not found");
+        }
+        return c;
     }
 
     private ClientServer getClientServerByName(String name) {
@@ -47,13 +53,13 @@ public class ClientServerManager implements ClientServerManagerLocal {
     @Override
     public ClientServer updateClientServer(Long clientServerId, String newName) throws CardioDataException {
         ClientServer c = getClientServerById(clientServerId);
-        if (c == null){
+        if (c == null) {
             throw new CardioDataException("ClientServer with id = " + clientServerId + " does not exist in the system");
         }
-        if (newName == null || "".equals(newName)){
+        if (newName == null || "".equals(newName)) {
             throw new CardioDataException("new name is empty");
         }
-        if (getClientServerByName(newName) != null){
+        if (getClientServerByName(newName) != null) {
             throw new CardioDataException("server with name = " + newName + " already exists in the system");
         }
         c.setName(newName);

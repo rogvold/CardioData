@@ -61,7 +61,7 @@ public class UserManager implements UserManagerLocal {
         }
         UserAccount acc = getAccount(aType, login, password);
         if (acc == null) {
-            throw new CardioDataException("user account with specified information is not found", ResponseConstants.LOGIN_FAILED_CODE);
+            throw new CardioDataException("incorrect auth data", ResponseConstants.LOGIN_FAILED_CODE);
         }
         User u = getUserById(acc.getUserId());
         return u;
