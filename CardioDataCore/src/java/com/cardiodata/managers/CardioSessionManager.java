@@ -55,7 +55,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 
     @Override
     public CardioSession updateCardioSession(Long sessionId, String newName, String newDescription) throws CardioDataException {
-        if (sessionId == null){
+        if (sessionId == null) {
             throw new CardioDataException("sessionId is null");
         }
         CardioSession cs = getCardioSessionById(sessionId);
@@ -137,5 +137,15 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
             return Collections.EMPTY_LIST;
         }
         return list;
+    }
+
+    @Override
+    public boolean isSessionOfUser(Long userId, Long sessionId) throws CardioDataException {
+        Query q = em.createQuery("select c from CardioSession c where c.userId = :userId and c.id = :sessionId").setParameter("userId", userId).setParameter("sessionId", sessionId);
+        List<CardioSession> list = q.getResultList();
+        if (list == null || list.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 }

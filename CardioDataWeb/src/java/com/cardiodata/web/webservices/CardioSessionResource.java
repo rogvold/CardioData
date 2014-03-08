@@ -1,7 +1,6 @@
 package com.cardiodata.web.webservices;
 
 import com.cardiodata.core.jpa.CardioSession;
-import com.cardiodata.core.jpa.ClientServer;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.*;
 import com.cardiodata.managers.CardioSessionManagerLocal;
@@ -29,9 +28,11 @@ public class CardioSessionResource {
 
     @POST
     @Produces("application/json")
+    @Consumes("application/json")
     @Path("createCardioSession")
-    public String createCardioSession(@FormParam("userId") Long userId, @FormParam("serverId") Long serverId) {
+    public String createCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId) {
         try {
+            tokenMan.assertToken(userId, token);
             CardioSession cs = cardMan.createCardioSession(userId, serverId);
             JsonResponse<CardioSession> jr = new JsonResponse<CardioSession>(ResponseConstants.OK, cs);
             return SimpleResponseWrapper.getJsonResponse(jr);
@@ -42,9 +43,11 @@ public class CardioSessionResource {
 
     @POST
     @Produces("application/json")
+    @Consumes("application/json")
     @Path("updateCardioSessionInfo")
-    public String updateCardioSessionInfo(@FormParam("sessionId") Long sessionId, @FormParam("name") String name, @FormParam("description") String description) {
+    public String updateCardioSessionInfo(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId, @FormParam("name") String name, @FormParam("description") String description) {
         try {
+            tokenMan.assertToken(userId, token);
             CardioSession cs = cardMan.updateCardioSession(sessionId, name, description);
             JsonResponse<CardioSession> jr = new JsonResponse<CardioSession>(ResponseConstants.OK, cs);
             return SimpleResponseWrapper.getJsonResponse(jr);
@@ -55,9 +58,11 @@ public class CardioSessionResource {
 
     @POST
     @Produces("application/json")
+    @Consumes("application/json")
     @Path("getCardioSessionData")
-    public String getCardioSessionData(@FormParam("sessionId") Long sessionId) {
+    public String getCardioSessionData(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId) {
         try {
+            tokenMan.assertToken(userId, token);
             CardioSessionWithData cswd = cardMan.getCardioSessionWihData(sessionId);
             JsonResponse<CardioSessionWithData> jr = new JsonResponse<CardioSessionWithData>(ResponseConstants.OK, cswd);
             return SimpleResponseWrapper.getJsonResponse(jr);
@@ -65,8 +70,6 @@ public class CardioSessionResource {
             return CardioDataExceptionWrapper.wrapException(e);
         }
     }
-    
-    
 
     /**
      * Creates a new instance of CardioSessionResource
