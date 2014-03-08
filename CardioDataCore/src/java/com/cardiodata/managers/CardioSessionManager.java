@@ -148,4 +148,16 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         }
         return true;
     }
+
+    @Override
+    public void deleteCardioSession(Long sessionId) throws CardioDataException {
+        if (sessionId == null) {
+            throw new CardioDataException("sessionId is null");
+        }
+        CardioSession c = getCardioSessionById(sessionId);
+        if (c == null) {
+            throw new CardioDataException("cardio session with id = " + sessionId + " is not found in the system");
+        }
+        em.remove(c);
+    }
 }

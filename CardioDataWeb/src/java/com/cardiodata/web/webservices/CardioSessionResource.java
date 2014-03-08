@@ -59,6 +59,22 @@ public class CardioSessionResource {
         }
     }
 
+    //tested
+    @POST
+    @Produces("application/json")
+    @Consumes("application/json")
+    @Path("deleteCardioSession")
+    public String deleteCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId) {
+        try {
+            tokenMan.assertToken(userId, token);
+            cardMan.deleteCardioSession(sessionId);
+            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
+            return SimpleResponseWrapper.getJsonResponse(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapException(e);
+        }
+    }
+
     @POST
     @Produces("application/json")
     @Consumes("application/json")

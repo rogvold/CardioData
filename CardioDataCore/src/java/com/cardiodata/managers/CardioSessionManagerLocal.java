@@ -33,5 +33,6 @@ public interface CardioSessionManagerLocal {
     
     public boolean isSessionOfUser(Long userId, Long sessionId) throws CardioDataException;
     
+    public void deleteCardioSession(Long sessionId) throws CardioDataException;
     
 }
