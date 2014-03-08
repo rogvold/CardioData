@@ -74,23 +74,22 @@ public class AuthResource {
         }
     }
 
-    @POST
-    @Produces("application/json")
-    @Consumes("application/json")
-    @Path("getUserToken")
-    public String getUserToken(@FormParam("userId") Long userId) {
-        try {
-            if (userId == null) {
-                throw new CardioDataException("userId is null");
-            }
-            ApiToken token = tokenMan.getCurrentToken(userId);
-            JsonResponse<ApiToken> jr = new JsonResponse<ApiToken>(ResponseConstants.OK, token);
-            return SimpleResponseWrapper.getJsonResponse(jr);
-        } catch (CardioDataException e) {
-            return CardioDataExceptionWrapper.wrapException(e);
-        }
-    }
-
+//    @POST
+//    @Produces("application/json")
+//    @Consumes("application/json")
+//    @Path("getUserToken")
+//    public String getUserToken(@FormParam("userId") Long userId) {
+//        try {
+//            if (userId == null) {
+//                throw new CardioDataException("userId is null");
+//            }
+//            ApiToken token = tokenMan.getCurrentToken(userId);
+//            JsonResponse<ApiToken> jr = new JsonResponse<ApiToken>(ResponseConstants.OK, token);
+//            return SimpleResponseWrapper.getJsonResponse(jr);
+//        } catch (CardioDataException e) {
+//            return CardioDataExceptionWrapper.wrapException(e);
+//        }
+//    }
     @POST
     @Produces("application/json")
     @Consumes("application/json")
@@ -101,7 +100,8 @@ public class AuthResource {
                 throw new CardioDataException("email or password is not specified");
             }
             User u = userMan.loginUser(AccountTypeEnum.EMAIL, email, password);
-            JsonResponse<User> jr = new JsonResponse<User>(ResponseConstants.OK, u);
+            ApiToken token = tokenMan.getCurrentToken(u.getId());
+            JsonResponse<ApiToken> jr = new JsonResponse<ApiToken>(ResponseConstants.OK, token);
             return SimpleResponseWrapper.getJsonResponse(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapException(e);
