@@ -6,9 +6,7 @@ import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.CardioSessionWithData;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -25,7 +23,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     EntityManager em;
 
     @Override
-    public CardioSession createCardioSession(Long userId, Long serverId) throws CardioDataException {
+    public CardioSession createCardioSession(Long userId, Long serverId, String dataClassName) throws CardioDataException {
         if (userId == null || serverId == null) {
             throw new CardioDataException("userId or serverId is null");
         }
@@ -33,12 +31,13 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         cs.setUserId(userId);
         cs.setServerId(serverId);
         cs.setCreationTimestamp((new Date()).getTime());
+        cs.setDataClassName(dataClassName);
         return em.merge(cs);
     }
 
     @Override
     public CardioSession createCardioSession(CardioSession cs) throws CardioDataException {
-        CardioSession csess = createCardioSession(cs.getUserId(), cs.getServerId());
+        CardioSession csess = createCardioSession(cs.getUserId(), cs.getServerId(), cs.getDataClassName());
         csess.setDataClassName(cs.getDataClassName());
         csess.setDescription(cs.getDescription());
         csess.setName(cs.getName());
@@ -125,36 +124,80 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         cw.setId(sessionId);
         List<CardioDataItem> dataItems = cw.getDataItems();
         CardioSession session = getCardioSessionById(sessionId);
-        session.setDataClassName(cw.getDataClassName());
+//        session.setDataClassName(cw.getDataClassName());
         em.merge(session);
-        long n = 0;
-        for (CardioDataItem cdi : dataItems) {
-            CardioDataItem ci = new CardioDataItem(cdi.getDataItem(), sessionId, n, cdi.getCreationTimestamp());
-            em.merge(ci);
-            n++;
-        }
-    }
-
-    @Override
-    public void appendCardioSessionData(String jsonIncomingData) throws CardioDataException {
-        System.out.println("appendCardioSessionData occured");
-        System.out.println("jsonIncomingData = " + jsonIncomingData);
-        CardioSessionWithData cw = (new Gson()).fromJson(jsonIncomingData, CardioSessionWithData.class);
-        Long sessionId = cw.getId();
-        if (sessionId == null) {
-            CardioSession c = new CardioSession();
-            c = em.merge(c);
-            sessionId = c.getId();
-        }
-        cw.setId(sessionId);
-        CardioSession session = getCardioSessionById(sessionId);
-        session.setDataClassName(cw.getDataClassName());
-        em.merge(session);
-        List<CardioDataItem> dataItems = cw.getDataItems();
+        List<CardioDataItem> oldList = getSessionCardioItems(sessionId);
+        dataItems = getNewDataItems(oldList, dataItems);
         for (CardioDataItem cdi : dataItems) {
             CardioDataItem ci = new CardioDataItem(cdi.getDataItem(), sessionId, cdi.getNumber(), cdi.getCreationTimestamp());
             em.merge(ci);
         }
+    }
+
+    @Override
+    public void rewriteCardioSessionData(String jsonIncomingData) throws CardioDataException {//todo
+        CardioSessionWithData cw = (new Gson()).fromJson(jsonIncomingData, CardioSessionWithData.class);
+        Long sessionId = cw.getId();
+        deleteCardioDataItems(sessionId);
+        List<CardioDataItem> dataItems = cw.getDataItems();
+        CardioSession session = getCardioSessionById(sessionId);
+        session.setName(cw.getName());
+        session.setDescription(cw.getDescription());
+        session.setCreationTimestamp(cw.getCreationTimestamp());
+        em.merge(session);
+        for (CardioDataItem cdi : dataItems) {
+            CardioDataItem ci = new CardioDataItem(cdi.getDataItem(), sessionId, cdi.getNumber(), cdi.getCreationTimestamp());
+            em.merge(ci);
+        }
+    }
+
+    private void deleteCardioDataItems(Long cardioSessionId) throws CardioDataException {
+        if (cardioSessionId == null) {
+            throw new CardioDataException("cardioSessionId is null");
+        }
+        Query q = em.createQuery("delete from CardioDataItem item where item.sessionId = :sId").setParameter("sId", cardioSessionId);
+        q.executeUpdate();
+    }
+
+    private List<CardioDataItem> getNewDataItems(List<CardioDataItem> oldList, List<CardioDataItem> newList) {
+        if (oldList == null) {
+            oldList = Collections.emptyList();
+        }
+        List<CardioDataItem> l = new ArrayList();
+        Set<Long> stamps = new HashSet();
+
+        for (CardioDataItem d : oldList) {
+            stamps.add(d.getNumber());
+        }
+        System.out.println("set = ");
+        System.out.println(stamps);
+
+        for (CardioDataItem d : newList) {
+            if (stamps.contains(d.getNumber())) {
+                System.out.println("skipping number " + d.getNumber());
+                continue;
+            } else {
+                stamps.add(d.getNumber());
+                l.add(d);
+                System.out.println("adding number " + d.getNumber());
+            }
+        }
+        if (l.size() <= 1) {
+            return l;
+        }
+//        Collections.sort(l, new Comparator<CardioDataItem>() {
+//            @Override
+//            public int compare(CardioDataItem s1, CardioDataItem s2) {
+//                return s1.getNumber().compareTo(s2.getNumber());
+//            }
+//        });
+//        List<CardioDataItem> res = new ArrayList();
+//        res.add(l.get(0));
+//        for (int i = 1; i < l.size(); i++){
+//            CardioDataItem item = l.get(i);
+//            item.setCreationTimestamp(l.get(i - 1).getCreationTimestamp() + item.get);
+//        }
+        return l;
     }
 
     @Override

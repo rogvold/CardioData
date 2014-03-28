@@ -35,7 +35,7 @@ public class CardioSessionResource {
     public String createCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId) {
         try {
             tokenMan.assertToken(userId, token);
-            CardioSession cs = cardMan.createCardioSession(userId, serverId);
+            CardioSession cs = cardMan.createCardioSession(userId, serverId, "JsonRRInterval");
             JsonResponse<CardioSession> jr = new JsonResponse<CardioSession>(ResponseConstants.OK, cs);
             return SimpleResponseWrapper.getJsonResponse(jr);
         } catch (CardioDataException e) {
@@ -84,6 +84,21 @@ public class CardioSessionResource {
         try {
             tokenMan.assertToken(userId, token);
             cardMan.saveCardioSessionData(serializedData);
+            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
+            return SimpleResponseWrapper.getJsonResponse(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapException(e);
+        }
+    }
+
+    @POST
+    @Produces("application/json")
+    @Consumes("application/json")
+    @Path("rewriteCardioSessionData")
+    public String rewriteCardioSessionData(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serializedData") String serializedData) {
+        try {
+            tokenMan.assertToken(userId, token);
+            cardMan.rewriteCardioSessionData(serializedData);
             JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
             return SimpleResponseWrapper.getJsonResponse(jr);
         } catch (CardioDataException e) {

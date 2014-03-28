@@ -72,6 +72,24 @@ public class AuthResource {
         }
     }
 
+    @POST
+    @Produces("application/json")
+    @Consumes("application/json")
+    @Path("updateUserInfo")
+    public String updateUserInfo(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("firstName") String firstName, @FormParam("lastName") String lastName) {
+        try {
+            if (userId == null) {
+                throw new CardioDataException("userId is not defined");
+            }
+            tokenMan.assertToken(userId, token);
+            userMan.updateUserProfile(userId, firstName, lastName);
+            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
+            return SimpleResponseWrapper.getJsonResponse(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapException(e);
+        }
+    }
+
     /**
      * Creates a new instance of AuthResource
      */

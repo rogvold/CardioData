@@ -13,7 +13,7 @@ import javax.ejb.Local;
 @Local
 public interface CardioSessionManagerLocal {
 
-    public CardioSession createCardioSession(Long userId, Long serverId) throws CardioDataException;
+    public CardioSession createCardioSession(Long userId, Long serverId, String dataClassName) throws CardioDataException;
 
     public CardioSession createCardioSession(CardioSession cs) throws CardioDataException;
 
@@ -29,7 +29,7 @@ public interface CardioSessionManagerLocal {
     
     public void saveCardioSessionData(String jsonIncomingData) throws CardioDataException;
     
-    public void appendCardioSessionData(String jsonIncomingData) throws CardioDataException;
+    public void rewriteCardioSessionData(String jsonIncomingData) throws CardioDataException;
     
     public List<CardioSession> getCardioSessionsOfUser(Long userId, Long serverId) throws CardioDataException;
     
