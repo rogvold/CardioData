@@ -11,8 +11,8 @@ public class CardioSessionWithData extends CardioSession {
 
     protected List<CardioDataItem> dataItems;
 
-    public CardioSessionWithData(List<CardioDataItem> dataItems, Long id, String name, String description, Long serverId, Long userId, Long creationTimestamp, String dataClassName) {
-        super(id, name, description, serverId, userId, creationTimestamp, dataClassName);
+    public CardioSessionWithData(List<CardioDataItem> dataItems, Long id, String name, String description, Long serverId, Long userId, Long creationTimestamp, String dataClassName, Long originalSessionId, Long lastModificationTimestamp) {
+        super(id, name, description, serverId, userId, creationTimestamp, dataClassName, originalSessionId, lastModificationTimestamp);
         this.dataItems = dataItems;
     }
 
@@ -26,4 +26,5 @@ public class CardioSessionWithData extends CardioSession {
     public void setDataItems(List<CardioDataItem> dataItems) {
         this.dataItems = dataItems;
     }
+
 }

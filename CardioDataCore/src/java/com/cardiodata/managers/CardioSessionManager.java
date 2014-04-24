@@ -4,6 +4,7 @@ import com.cardiodata.core.jpa.CardioDataItem;
 import com.cardiodata.core.jpa.CardioSession;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.CardioSessionWithData;
+import com.cardiodata.json.ResponseConstants;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.util.*;
@@ -41,6 +42,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         csess.setDataClassName(cs.getDataClassName());
         csess.setDescription(cs.getDescription());
         csess.setName(cs.getName());
+        csess.setCreationTimestamp(cs.getCreationTimestamp());
         return em.merge(csess);
     }
 
@@ -63,6 +65,21 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         }
         cs.setName(newName);
         cs.setDescription(newDescription);
+        cs.setLastModificationTimestamp((new Date()).getTime());
+        return em.merge(cs);
+    }
+
+    @Override
+    public CardioSession renameCardioSession(Long sessionId, String newName) throws CardioDataException {
+        if (sessionId == null) {
+            throw new CardioDataException("sessionId is null");
+        }
+        CardioSession cs = getCardioSessionById(sessionId);
+        if (newName == null || "".equals(newName)) {
+            throw new CardioDataException("new name is empty");
+        }
+        cs.setName(newName);
+        cs.setLastModificationTimestamp((new Date()).getTime());
         return em.merge(cs);
     }
 
@@ -106,7 +123,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
             throw new CardioDataException("cardiosession with id=" + sessionId + " is not found");
         }
         List<CardioDataItem> list = getSessionCardioItems(sessionId);
-        CardioSessionWithData cw = new CardioSessionWithData(list, sessionId, cs.getName(), cs.getDescription(), cs.getServerId(), cs.getUserId(), cs.getCreationTimestamp(), cs.getDataClassName());
+        CardioSessionWithData cw = new CardioSessionWithData(list, sessionId, cs.getName(), cs.getDescription(), cs.getServerId(), cs.getUserId(), cs.getCreationTimestamp(), cs.getDataClassName(), cs.getOriginalSessionId(), cs.getLastModificationTimestamp());
         return cw;
     }
 
@@ -124,6 +141,11 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         cw.setId(sessionId);
         List<CardioDataItem> dataItems = cw.getDataItems();
         CardioSession session = getCardioSessionById(sessionId);
+
+//        Long extModifDate = Math.min(cw.getLastModificationTimestamp(), (new Date()).getTime());
+//        if (extModifDate < session.getLastModificationTimestamp()) {
+//            throw new CardioDataException("session was updated on server", ResponseConstants.SESSION_IS_MODIFIED_ON_SERVER_CODE);
+//        }
 //        session.setDataClassName(cw.getDataClassName());
         em.merge(session);
         List<CardioDataItem> oldList = getSessionCardioItems(sessionId);
@@ -141,9 +163,20 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         deleteCardioDataItems(sessionId);
         List<CardioDataItem> dataItems = cw.getDataItems();
         CardioSession session = getCardioSessionById(sessionId);
+
+        if (cw.getLastModificationTimestamp() == null) {
+            cw.setLastModificationTimestamp((new Date()).getTime());
+        }
+        Long extModifDate = Math.min(cw.getLastModificationTimestamp(), (new Date()).getTime());
+        if (extModifDate < session.getLastModificationTimestamp()) {
+            throw new CardioDataException("session was updated on server", ResponseConstants.SESSION_IS_MODIFIED_ON_SERVER_CODE);
+        }
+
         session.setName(cw.getName());
         session.setDescription(cw.getDescription());
         session.setCreationTimestamp(cw.getCreationTimestamp());
+        session.setLastModificationTimestamp(cw.getLastModificationTimestamp() == null ? (new Date()).getTime() : cw.getLastModificationTimestamp());
+        session.setOriginalSessionId(cw.getOriginalSessionId());
         em.merge(session);
         for (CardioDataItem cdi : dataItems) {
             CardioDataItem ci = new CardioDataItem(cdi.getDataItem(), sessionId, cdi.getNumber(), cdi.getCreationTimestamp());

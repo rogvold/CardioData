@@ -6,6 +6,7 @@ CardioDataLogin = function(){
     this.expirationDate = undefined;
     this.userId = undefined;
     this.autologinMode = false;
+    this.base = "http://data.cardiomood.com";
     
     this.init = function(){
         self.autologinMode = ( ( gup('autologin') != undefined ) && (gup('autologin') != ""));
@@ -39,9 +40,9 @@ CardioDataLogin = function(){
     
     this.loginUser = function(email, password){
         $.ajax({
+            url:  self.base + '/CardioDataWeb/resources/auth/loginByEmailAndPassword',
             type: 'POST',
-            url: '/CardioDataWeb/resources/auth/loginByEmailAndPassword',
-            contentType: "application/json",
+            //            contentType: "application/json",
             data: {
                 email: email,
                 password: password
@@ -58,6 +59,7 @@ CardioDataLogin = function(){
                 }
             }
         });
+        
     }
     
     this.prepareLoginForm = function(){

@@ -11,22 +11,10 @@
         </div>
         <script>
             
+            
+            
             $(function(){
-                
-                $.ajax({
-                    url:'http://data.cardiomood.com/CardioDataWeb/resources/test/test2',
-                    type: 'POST',
-                    success: function(data){
-                        console.log(data);
-                        alert(data);
-                    },
-                    error: function(xhr, ajaxOptions, thrownError){
-                        console.log('error');
-                        console.log(xhr);
-                        console.log(xhr.responseText);
-                    }
-                });
-                
+                test();
             });
             
         </script>

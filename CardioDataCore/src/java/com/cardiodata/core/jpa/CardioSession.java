@@ -21,8 +21,10 @@ public class CardioSession implements Serializable {
     protected Long userId;
     protected Long creationTimestamp;
     protected String dataClassName;
+    protected Long lastModificationTimestamp;
+    protected Long originalSessionId;
 
-    public CardioSession(Long id, String name, String description, Long serverId, Long userId, Long creationTimestamp, String dataClassName) {
+    public CardioSession(Long id, String name, String description, Long serverId, Long userId, Long creationTimestamp, String dataClassName, Long originalSessionId, Long lastModificationTimestamp) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -30,6 +32,7 @@ public class CardioSession implements Serializable {
         this.userId = userId;
         this.creationTimestamp = creationTimestamp;
         this.dataClassName = dataClassName;
+        this.originalSessionId = originalSessionId;
     }
 
     public CardioSession() {
@@ -89,6 +92,22 @@ public class CardioSession implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getLastModificationTimestamp() {
+        return lastModificationTimestamp;
+    }
+
+    public void setLastModificationTimestamp(Long lastModificationTimestamp) {
+        this.lastModificationTimestamp = lastModificationTimestamp;
+    }
+
+    public Long getOriginalSessionId() {
+        return originalSessionId;
+    }
+
+    public void setOriginalSessionId(Long originSessionId) {
+        this.originalSessionId = originSessionId;
     }
 
     @Override

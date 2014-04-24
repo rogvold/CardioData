@@ -1,4 +1,4 @@
-package com.cardiodata.additional;
+package com.cardiodata.utils;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -10,7 +10,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 public class CORSUtils {
 
 //    private String _corsHeaders;
-
     public static Response makeCORS(ResponseBuilder req, String returnMethod) {
         ResponseBuilder rb = req.header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
 
@@ -20,8 +19,11 @@ public class CORSUtils {
 
         return rb.build();
     }
-    
 
+    public static Response makeCORS(ResponseBuilder req) {
+        ResponseBuilder rb = req.header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        return rb.build();
+    }
 //    private Response makeCORS(ResponseBuilder req) {
 //        return makeCORS(req, _corsHeaders);
 //    }

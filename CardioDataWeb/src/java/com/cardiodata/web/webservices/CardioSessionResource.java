@@ -9,6 +9,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 /**
@@ -30,109 +31,116 @@ public class CardioSessionResource {
     //tested
     @POST
     @Produces("application/json")
-    @Consumes("application/json")
     @Path("createCardioSession")
-    public String createCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId) {
+    public Response createCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId) {
         try {
             tokenMan.assertToken(userId, token);
             CardioSession cs = cardMan.createCardioSession(userId, serverId, "JsonRRInterval");
             JsonResponse<CardioSession> jr = new JsonResponse<CardioSession>(ResponseConstants.OK, cs);
-            return SimpleResponseWrapper.getJsonResponse(jr);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
-            return CardioDataExceptionWrapper.wrapException(e);
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
 
     //tested
     @POST
     @Produces("application/json")
-    @Consumes("application/json")
     @Path("getCardioSessionsOfUser")
-    public String getCardioSessionsOfUser(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId) {
+    public Response getCardioSessionsOfUser(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId) {
         try {
             tokenMan.assertToken(userId, token);
             List<CardioSession> list = cardMan.getCardioSessionsOfUser(userId, serverId);
             JsonResponse<List<CardioSession>> jr = new JsonResponse<List<CardioSession>>(ResponseConstants.OK, list);
-            return SimpleResponseWrapper.getJsonResponse(jr);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
-            return CardioDataExceptionWrapper.wrapException(e);
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
 
     //tested
     @POST
     @Produces("application/json")
-    @Consumes("application/json")
     @Path("deleteCardioSession")
-    public String deleteCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId) {
+    public Response deleteCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId) {
         try {
             tokenMan.assertToken(userId, token);
             cardMan.deleteCardioSession(sessionId);
             JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
-            return SimpleResponseWrapper.getJsonResponse(jr);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
-            return CardioDataExceptionWrapper.wrapException(e);
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
 
     //tested
     @POST
     @Produces("application/json")
-    @Consumes("application/json")
     @Path("appendDataToCardioSession")
-    public String appendDataToCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serializedData") String serializedData) {
+    public Response appendDataToCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serializedData") String serializedData) {
         try {
             tokenMan.assertToken(userId, token);
             cardMan.saveCardioSessionData(serializedData);
             JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
-            return SimpleResponseWrapper.getJsonResponse(jr);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
-            return CardioDataExceptionWrapper.wrapException(e);
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
 
     @POST
     @Produces("application/json")
-    @Consumes("application/json")
     @Path("rewriteCardioSessionData")
-    public String rewriteCardioSessionData(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serializedData") String serializedData) {
+    public Response rewriteCardioSessionData(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serializedData") String serializedData) {
         try {
             tokenMan.assertToken(userId, token);
             cardMan.rewriteCardioSessionData(serializedData);
             JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
-            return SimpleResponseWrapper.getJsonResponse(jr);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
-            return CardioDataExceptionWrapper.wrapException(e);
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
 
     @POST
     @Produces("application/json")
-    @Consumes("application/json")
     @Path("updateCardioSessionInfo")
-    public String updateCardioSessionInfo(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId, @FormParam("name") String name, @FormParam("description") String description) {
+    public Response updateCardioSessionInfo(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId, @FormParam("name") String name, @FormParam("description") String description) {
         try {
             tokenMan.assertToken(userId, token);
             CardioSession cs = cardMan.updateCardioSession(sessionId, name, description);
             JsonResponse<CardioSession> jr = new JsonResponse<CardioSession>(ResponseConstants.OK, cs);
-            return SimpleResponseWrapper.getJsonResponse(jr);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
-            return CardioDataExceptionWrapper.wrapException(e);
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
 
     @POST
     @Produces("application/json")
-    @Consumes("application/json")
     @Path("getCardioSessionData")
-    public String getCardioSessionData(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId) {
+    public Response getCardioSessionData(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId) {
         try {
             tokenMan.assertToken(userId, token);
             CardioSessionWithData cswd = cardMan.getCardioSessionWihData(sessionId);
             JsonResponse<CardioSessionWithData> jr = new JsonResponse<CardioSessionWithData>(ResponseConstants.OK, cswd);
-            return SimpleResponseWrapper.getJsonResponse(jr);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
-            return CardioDataExceptionWrapper.wrapException(e);
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+
+    @POST
+    @Produces("application/json")
+    @Path("renameCardioSession")
+    public Response renameCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId,  @FormParam("sessionId") Long sessionId, @FormParam("name") String newName) {
+        try {
+            tokenMan.assertToken(userId, token);
+            CardioSession cs = cardMan.renameCardioSession(sessionId, newName);
+            JsonResponse<CardioSession> jr = new JsonResponse<CardioSession>(ResponseConstants.OK, cs);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
 

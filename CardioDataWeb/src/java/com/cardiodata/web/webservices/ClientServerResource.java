@@ -11,6 +11,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 /**
@@ -33,52 +34,51 @@ public class ClientServerResource {
     public ClientServerResource() {
     }
 
-    
     @POST
     @Produces("application/json")
-    @Consumes("application/json")
+//    @Consumes("application/json")
     @Path("getServer")
-    public String getClientServer(@FormParam("serverId") Long serverId) {
+    public Response getClientServer(@FormParam("serverId") Long serverId) {
         try {
             if (serverId == null) {
                 throw new CardioDataException("serverId is not defined");
             }
             ClientServer c = csMan.getClientServerById(serverId);
             JsonResponse<ClientServer> jr = new JsonResponse<ClientServer>(ResponseConstants.OK, c);
-            return SimpleResponseWrapper.getJsonResponse(jr);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
-            return CardioDataExceptionWrapper.wrapException(e);
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
 
     @POST
     @Produces("application/json")
-    @Consumes("application/json")
+//    @Consumes("application/json")
     @Path("createClientServer")
-    public String createClientServer(@FormParam("name") String name) {
+    public Response createClientServer(@FormParam("name") String name) {
         try {
             ClientServer c = csMan.createClientServer(name);
             JsonResponse<ClientServer> jr = new JsonResponse<ClientServer>(ResponseConstants.OK, c);
-            return SimpleResponseWrapper.getJsonResponse(jr);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
-            return CardioDataExceptionWrapper.wrapException(e);
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
 
     @POST
     @Produces("application/json")
-    @Consumes("application/json")
+//    @Consumes("application/json")
     @Path("updateClientServer")
-    public String updateClientServer(@FormParam("serverId") Long serverId, @FormParam("name") String name) {
+    public Response updateClientServer(@FormParam("serverId") Long serverId, @FormParam("name") String name) {
         try {
             if (serverId == null) {
                 throw new CardioDataException("server id is null");
             }
             ClientServer c = csMan.updateClientServer(serverId, name);
             JsonResponse<ClientServer> jr = new JsonResponse<ClientServer>(ResponseConstants.OK, c);
-            return SimpleResponseWrapper.getJsonResponse(jr);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
-            return CardioDataExceptionWrapper.wrapException(e);
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
 }

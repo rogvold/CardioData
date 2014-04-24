@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 /**
@@ -33,33 +34,83 @@ public class CalcResource {
      *
      * @return an instance of java.lang.String
      */
-    
-    
     @POST
     @Produces("application/json")
-    @Consumes("application/json")
     @Path("getSpectrum")
-    public String getSpectrum(@FormParam("data") String data ) {
+    public Response getSpectrum(@FormParam("data") String data) {
         try {
-//            String data = formParams.getFirst("data");
             System.out.println(data);
             if (data == null) {
                 throw new CardioDataException("data is not specified");
             }
             CalcInputData d = (new Gson()).fromJson(data, CalcInputData.class);
             double[][] res = CalcManager.getSpectrum(d.getSeries());
-            
+
             JsonResponse<double[][]> jr = new JsonResponse<double[][]>(ResponseConstants.OK, res);
-            
-            return SimpleResponseWrapper.getJsonResponse(jr);
+
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
-            return CardioDataExceptionWrapper.wrapException(e);
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
 
-    
-    
-    
+    @POST
+    @Produces("application/json")
+    @Path("getTension")
+    public Response getTension(@FormParam("data") String data) {
+        try {
+            System.out.println(data);
+            if (data == null) {
+                throw new CardioDataException("data is not specified");
+            }
+            CalcInputData d = (new Gson()).fromJson(data, CalcInputData.class);
+
+            double[] rrs = d.getSeries();
+            double[] time = d.getTime();
+
+            double[][] res;
+
+            if (time == null) {
+                res = CalcManager.getTensionArray(d.getSeries());
+            } else {
+                res = CalcManager.getTensionArray(rrs, time);
+            }
+
+            JsonResponse<double[][]> jr = new JsonResponse<double[][]>(ResponseConstants.OK, res);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+
+    @POST
+    @Produces("application/json")
+    @Path("getSDNN")
+    public Response getSDNN(@FormParam("data") String data) {
+        try {
+            System.out.println(data);
+            if (data == null) {
+                throw new CardioDataException("data is not specified");
+            }
+            CalcInputData d = (new Gson()).fromJson(data, CalcInputData.class);
+
+            double[] rrs = d.getSeries();
+            double[] time = d.getTime();
+            double[][] res;
+
+            if (time == null) {
+                res = CalcManager.getSDNN(d.getSeries());
+            } else {
+                res = CalcManager.getSDNN(rrs, time);
+            }
+
+            JsonResponse<double[][]> jr = new JsonResponse<double[][]>(ResponseConstants.OK, res);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+
     /**
      * PUT method for updating or creating an instance of CalcResource
      *

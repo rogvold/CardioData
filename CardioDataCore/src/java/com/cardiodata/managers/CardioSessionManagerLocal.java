@@ -21,6 +21,8 @@ public interface CardioSessionManagerLocal {
     
     public CardioSession updateCardioSession(Long sessionId, String newName, String newDescription) throws CardioDataException;
     
+    public CardioSession renameCardioSession(Long sessionId, String newName) throws CardioDataException;
+    
     public CardioSession getCardioSessionById(Long sessionId) throws CardioDataException;
     
     public void saveCardioSessionItems(Long sessionId, String jsonList) throws CardioDataException;

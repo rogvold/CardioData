@@ -7,6 +7,7 @@ package com.cardiodata.additional;
 public class CalcInputData {
 
     private double[] series;
+    private double[] time;
     private String method;
 
     public String getMethod() {
@@ -23,5 +24,13 @@ public class CalcInputData {
 
     public void setSeries(double[] series) {
         this.series = series;
+    }
+
+    public double[] getTime() {
+        return time;
+    }
+
+    public void setTime(double[] time) {
+        this.time = time;
     }
 }

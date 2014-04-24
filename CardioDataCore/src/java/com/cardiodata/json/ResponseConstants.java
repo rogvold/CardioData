@@ -12,6 +12,8 @@ public class ResponseConstants {
     public static final Integer NOT_AUTHORIZED_CODE = 23;
     public static final Integer ACCESS_DENIED_CODE = 24;
     
+    public static final Integer SESSION_IS_MODIFIED_ON_SERVER_CODE = 26;
+    
     public static final Integer REGISTRATION_FAILED_CODE = 25;
     
     
