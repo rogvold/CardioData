@@ -26,6 +26,9 @@ CardioSessionManager = function(){
     
     this.currentSessionStartDate = undefined;
     this.currentSessionEndDate = undefined;
+    
+//    this.optimalPointsNumber = 1000;
+    this.optimalPointsNumber = 1000;
 
     this.init = function(){
         self.token = getStringFromLocalStorage('token');
@@ -60,7 +63,31 @@ CardioSessionManager = function(){
     }
 
 
-
+    this.decimatePlotData = function(data){
+        console.log('decimatePlotData occured');
+        if (data == undefined){
+            return undefined;
+        }
+        var len = data.length;
+        if (len < self.optimalPointsNumber * 2){
+            return data;
+        }
+        var k = Math.floor(len / self.optimalPointsNumber);
+        
+        console.log('k = ' + k);
+        
+        var data2 = [];
+        for (var i =0; i < len; i+=k){
+            var a2 = {
+                date: data[i].date,
+                rr: data[i].rr,
+                lineColor: data[i].lineColor
+            }
+            data2.push(a2);
+        }
+        return data2;
+    }
+    
     this.loadSessionList = function(){
         $.ajax({
             url: self.base + '/CardioDataWeb/resources/cardioSession/getCardioSessionsOfUser',
@@ -462,7 +489,7 @@ CardioSessionManager = function(){
 
     this.prepareCurrentSessionBlock = function(session){
         console.log('prepareCurrentSessionBlock occured');
-        console.log(session);
+        //        console.log(session);
         var dataItems = session.dataItems;
         var sName = (session.name == undefined) ? ('session #' + session.id) : session.name;
         $('.currentSessionName').text(sName);
@@ -490,10 +517,6 @@ CardioSessionManager = function(){
         
         var intervals = self.getIntervalsFromDataItemsList(dataItems);
         var timestamps = self.getTimestampsFromDataItemsList(dataItems);
-        //        console.log('interrrrrrvals');
-        //        console.log(intervals);
-        //        console.log('dataItems');
-        //        console.log(dataItems);
         self.currentSessionStartDate = new Date(dataItems[0].creationTimestamp); // ololo
         self.currentSessionEndDate = new Date(dataItems[dataItems.length - 1].creationTimestamp); // ololo
         
@@ -562,13 +585,16 @@ CardioSessionManager = function(){
             return;
         }
         console.log('drawing stress');
-        console.log(intervals);
+        //        console.log(intervals);
+       
        
         if (self.stressChart == undefined){
             console.log('preparing tension plot....');
+            var decimatedArr = self.decimatePlotData(arr);
             self.stressChart = AmCharts.makeChart("stressChart", {
                 type: "serial",
-                "dataProvider": arr,
+                "dataProvider": decimatedArr,
+                //                "dataProvider": arr,
                 
                 "pathToImages": "http://www.amcharts.com/lib/3/images/",
                 
@@ -594,9 +620,11 @@ CardioSessionManager = function(){
                     "hideBulletsCount": 50,
                     "title": "red line",
                     "valueField": "rr",
-                    "lineColorField": "lineColor",
-                    "fillColorsField": "lineColor",
-                    "fillAlphas": 0.8,
+                    
+                    //                    "lineColorField": "lineColor",
+                    //                    "fillColorsField": "lineColor",
+                    //                    "fillAlphas": 0.8,
+                    
                     "useLineColorForBulletBorder":true
                 }],
             
@@ -608,7 +636,7 @@ CardioSessionManager = function(){
             });
         }else{
             setTimeout(function(){
-                self.stressChart.dataProvider = arr;
+                self.stressChart.dataProvider = self.decimatePlotData(arr);
                 self.stressChart.validateData();
             }, 300);
             
@@ -655,7 +683,7 @@ CardioSessionManager = function(){
                 //                dateVal: intervals[0][i],
                 date: new Date(intervals[0][i] + t0),
                 //                dateVal: moment(intervals[0][i]).format('h:m:s'),
-                sigma: intervals[1][i],
+                rr: intervals[1][i],
                 lineColor: lineColor
             });
         }
@@ -666,17 +694,20 @@ CardioSessionManager = function(){
 
         
         console.log('preparing sigma plot ');
-        console.log(intervals);
+        //        console.log(intervals);
         
         if ($('#sigmaChart').is(':visible') == false){
             return;
         }
+        var decimatedArr = self.decimatePlotData(arr);
         
         if (self.sigmaChart == undefined){
             console.log('preparing sigma plot....');
             self.sigmaChart = AmCharts.makeChart("sigmaChart", {
                 type: "serial",
-                "dataProvider": arr,
+                //                "dataProvider": arr,
+                //                "dataProvider": arr,
+                "dataProvider": decimatedArr,
                 
                 "pathToImages": "http://www.amcharts.com/lib/3/images/",
                 
@@ -701,10 +732,13 @@ CardioSessionManager = function(){
                     "bulletColor":"#FFFFFF",
                     "hideBulletsCount": 50,
                     "title": "red line",
-                    "valueField": "sigma",
-                    "lineColorField": "lineColor",
-                    "fillColorsField": "lineColor",
-                    "fillAlphas": 0.8,
+                    "valueField": "rr",
+                    
+                    //                    "lineColorField": "lineColor",
+                    //                    "fillColorsField": "lineColor",
+                    //                    "fillAlphas": 0.8,
+                    
+                    
                     "useLineColorForBulletBorder":true
                 }],
             
@@ -715,7 +749,7 @@ CardioSessionManager = function(){
                 }
             });
         }else{
-            self.sigmaChart.dataProvider = arr;
+            self.sigmaChart.dataProvider = self.decimatePlotData(arr);
             self.sigmaChart.validateData();
         }
     }
@@ -773,10 +807,12 @@ CardioSessionManager = function(){
         //        var chartData = [];
         if (self.pulseChart == undefined){
             console.log('preparing pulse plot....');
+            var decimatedArr = self.decimatePlotData(chartData)
             //            console.log(intervalsObjectArray);
             self.pulseChart = AmCharts.makeChart("pulseChart", {
                 type: "serial",
-                "dataProvider": chartData,
+                //                "dataProvider": chartData,
+                "dataProvider": decimatedArr,
                 //                "dataDateFormat": "mm:ss",
                 "categoryAxis": {
                     "minPeriod": "ss",
@@ -790,9 +826,12 @@ CardioSessionManager = function(){
                 
                 "categoryField": "date",
                 "valueAxes": [{
-                    "axisAlpha": 0.2,
+//                    "axisAlpha": 0.2,
+                    "axisAlpha": 0,
                     "dashLength": 1,
-                    "position": "left"
+                    "position": "left",
+                    "minimum": 40,
+                    "maximum": 210
                 }],
                 "graphs": [{
                     "id":"g1",
@@ -815,7 +854,7 @@ CardioSessionManager = function(){
                 }
             });
         }else{
-            self.pulseChart.dataProvider = intervalsObjectArray;
+            self.pulseChart.dataProvider = self.decimatePlotData(intervalsObjectArray);
             self.pulseChart.validateData();
         }
         
@@ -849,6 +888,9 @@ CardioSessionManager = function(){
         
         return arr;
     }
+
+
+    
 
     this.get2DArrayFromDataItemsList = function(dataItems){
         if (dataItems == undefined){

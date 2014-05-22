@@ -160,13 +160,24 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     public void rewriteCardioSessionData(String jsonIncomingData) throws CardioDataException {//todo
         CardioSessionWithData cw = (new Gson()).fromJson(jsonIncomingData, CardioSessionWithData.class);
         Long sessionId = cw.getId();
+        System.out.println("rewriteCardioSessionData: sessionId = " + sessionId + "");
         deleteCardioDataItems(sessionId);
         List<CardioDataItem> dataItems = cw.getDataItems();
         CardioSession session = getCardioSessionById(sessionId);
+        
+        if (session == null){
+            throw new CardioDataException("can not find session with sessionId="+sessionId+"", ResponseConstants.NORMAL_ERROR_CODE);
+        }
 
         if (cw.getLastModificationTimestamp() == null) {
             cw.setLastModificationTimestamp((new Date()).getTime());
         }
+        
+        if (session.getLastModificationTimestamp() == null){
+            session.setLastModificationTimestamp((new Date()).getTime());
+        }
+        
+        
         Long extModifDate = Math.min(cw.getLastModificationTimestamp(), (new Date()).getTime());
         if (extModifDate < session.getLastModificationTimestamp()) {
             throw new CardioDataException("session was updated on server", ResponseConstants.SESSION_IS_MODIFIED_ON_SERVER_CODE);
