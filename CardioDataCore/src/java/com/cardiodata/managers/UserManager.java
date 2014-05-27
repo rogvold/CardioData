@@ -3,14 +3,19 @@ package com.cardiodata.managers;
 import com.cardiodata.core.jpa.ApiToken;
 import com.cardiodata.core.jpa.User;
 import com.cardiodata.core.jpa.UserAccount;
+import com.cardiodata.core.jpa.UserGroup;
 import com.cardiodata.enums.AccountStatusEnum;
 import com.cardiodata.enums.AccountTypeEnum;
+import com.cardiodata.enums.UserGroupPrivacyEnum;
+import com.cardiodata.enums.UserGroupStatusEnum;
+import com.cardiodata.enums.UserGroupTypeEnum;
 import com.cardiodata.enums.UserRoleEnum;
 import com.cardiodata.enums.UserStatusEnum;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.ResponseConstants;
 import com.cardiodata.json.TokenManagerLocal;
 import com.cardiodata.utils.StringUtils;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -30,6 +35,12 @@ public class UserManager implements UserManagerLocal {
     EntityManager em;
     @EJB
     TokenManagerLocal tokenMan;
+    
+    @EJB
+    UserManagerLocal ugMan;
+
+    public UserManager() {
+    }
 
     private boolean userExists(String email) throws CardioDataException {
         if (email == null || "".equals(email)) {
@@ -146,6 +157,32 @@ public class UserManager implements UserManagerLocal {
         em.merge(t);
         return u;
     }
+    
+    @Override
+    public User registerTrainer(AccountTypeEnum aType, String login, String password) throws CardioDataException {
+        if (getAccount(aType, login) != null) {
+            throw new CardioDataException("user with specified login has been alterady registered in the system", ResponseConstants.REGISTRATION_FAILED_CODE);
+        }
+
+        User u = new User();
+        u.setRegistrationDate((new Date()).getTime());
+        u.setLastLoginDate((new Date()).getTime());
+        u.setAccountStatus(AccountStatusEnum.FREE);
+        u.setUserRole(UserRoleEnum.TRAINER);
+        u.setUserStatus(UserStatusEnum.ACTIVE);
+        u = em.merge(u);
+
+        UserAccount acc = new UserAccount(login, password, aType, u.getId());
+        em.merge(acc);
+
+        ApiToken t = new ApiToken(u.getId(), StringUtils.generateRandomString(ApiToken.TOKEN_LENGTH), (new Date().getTime() + ApiToken.EXPIRATION_TIME));
+        em.merge(t);
+        
+        UserGroup g = new UserGroup("Default group", "", (new Date()).getTime(), u.getId(), UserGroupTypeEnum.DEFAULT, UserGroupStatusEnum.ACTIVE, UserGroupPrivacyEnum.PUBLIC);
+        em.merge(g);
+        
+        return u;
+    }
 
     @Override
     public User updateUserProfile(Long userId, String firstName, String lastName) throws CardioDataException {
@@ -157,4 +194,68 @@ public class UserManager implements UserManagerLocal {
         u.setLastName(lastName);
         return em.merge(u);
     }
+
+    @Override
+    public List<User> getAllTrainers() {
+        List<User> list = em.createQuery("select User u where u.userRole=:role").setParameter("role", UserRoleEnum.TRAINER).getResultList();
+        if (list == null || list.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+        return list;
+    }
+
+    @Override
+    public List<User> getUserTrainers(Long userId) throws CardioDataException {
+        if (userId == null){
+            throw new CardioDataException("getUserTrainers: userId is null");
+        }
+        List<User> list = em.createQuery("select t from User t, User u, UserGroupBinding bu, UserGroup g "
+                + " where "
+                + " t.id = g.ownerId "
+                + " and "
+                + " u.id = bu.userId and bu.groupId = g.id "
+                + " and "
+                + " u.id=:userId ").setParameter("userId", userId).getResultList();
+        if (list == null || list.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+        return list;
+    }
+
+    @Override
+    public List<User> getTrainees(Long trainerId) throws CardioDataException {
+        if (trainerId == null){
+            throw new CardioDataException("getUserTrainers: userId is null");
+        }
+        List<User> list = em.createQuery("select u from User t, User u, UserGroupBinding bu, UserGroup g "
+                + " where "
+                + " t.id = g.ownerId "
+                + " and "
+                + " u.id = bu.userId and bu.groupId = g.id "
+                + " and "
+                + " t.id=:trainerId ").setParameter("trainerId", trainerId).getResultList();
+        if (list == null || list.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+        return list;
+    }
+
+    @Override
+    public UserGroup getTrainerDefaultGroup(Long trainerId) throws CardioDataException {
+        if (trainerId == null){
+            throw new CardioDataException("getTrainerDefaultGroup: trainerId is null");
+        }
+        List<UserGroup> list = em.createQuery("select g from UserGroup g, UserGroupBinding gb where "
+                + " g.id=gb.groupId and gb.userId=:trainerId and g.groupType=:gType")
+                .setParameter("gType", UserGroupTypeEnum.DEFAULT)
+                .setParameter("trainerId", trainerId).getResultList();
+        if (list == null || list.isEmpty()){
+            return null;
+        }
+        if (list.size() > 1){
+            throw new CardioDataException("trainer has not two default groups");
+        }
+        return list.get(0);
+    }
+    
 }

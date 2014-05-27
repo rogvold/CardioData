@@ -1,9 +1,10 @@
 package com.cardiodata.managers;
 
+import com.cardiodata.core.jpa.User;
 import com.cardiodata.core.jpa.UserGroup;
 import com.cardiodata.core.jpa.UserGroupBinding;
 import com.cardiodata.core.jpa.UserGroupRequest;
-import com.cardiodata.enums.UserGroupPrivecyEnum;
+import com.cardiodata.enums.UserGroupPrivacyEnum;
 import com.cardiodata.enums.UserGroupRequestStatusEnum;
 import com.cardiodata.enums.UserGroupStatusEnum;
 import com.cardiodata.enums.UserGroupTypeEnum;
@@ -11,9 +12,11 @@ import com.cardiodata.exceptions.CardioDataException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -22,8 +25,12 @@ import javax.persistence.PersistenceContext;
 @Stateless
 public class UserGroupManager implements UserGroupManagerLocal {
 
+
     @PersistenceContext(unitName = "CardioDataCorePU")
     EntityManager em;
+    
+    @EJB
+    UserManagerLocal userMan;
 
     private UserGroup getUserGroupByName(String name, Long ownerId) {
         List<UserGroup> list = em.createQuery("select g from UserGroup g where q.name = :name and g.ownerId = :ownerId").setParameter("name", name).setParameter("ownerId", ownerId).getResultList();
@@ -56,7 +63,7 @@ public class UserGroupManager implements UserGroupManagerLocal {
         if (ugr != null) {
             throw new CardioDataException("Group with ownerId=" + ownerId + " and name = " + name + " already exists in the system");
         }
-        UserGroup ug = new UserGroup(name, description, (new Date()).getTime(), ownerId, UserGroupTypeEnum.GENERAL, UserGroupStatusEnum.ACTIVE, UserGroupPrivecyEnum.PUBLIC);
+        UserGroup ug = new UserGroup(name, description, (new Date()).getTime(), ownerId, UserGroupTypeEnum.GENERAL, UserGroupStatusEnum.ACTIVE, UserGroupPrivacyEnum.PUBLIC);
         em.merge(ug);
     }
 
@@ -83,6 +90,7 @@ public class UserGroupManager implements UserGroupManagerLocal {
         Long userId = req.getUserId();
         UserGroupBinding b = new UserGroupBinding(userId, groupId);
         em.merge(b);
+        req.setRequestStatus(UserGroupRequestStatusEnum.ACCEPTED);
         em.remove(req);
     }
 
@@ -109,9 +117,37 @@ public class UserGroupManager implements UserGroupManagerLocal {
         }
         return list;
     }
+    
+    
+    @Override
+    public List<UserGroup> getGroupsOwnedByUser(Long ownerId) throws CardioDataException {
+        if (ownerId == null) {
+            throw new CardioDataException("getGroupsOwnedByUser: ownerId is null");
+        }
+        List<UserGroup> list = em.createQuery("select g from UserGroup g, UserGroupBinding b where g.id=b.groupId and g.ownerId=:ownerId").setParameter("ownerId", ownerId).getResultList();
+        if (list == null || list.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+        return list;
+    }
+    
+    
+    @Override
+    public List<User> getUsersInGroup(Long groupId) throws CardioDataException {
+        if (groupId == null){
+            throw new CardioDataException("getUsersInGroup: groupId is null");
+        }
+        List<User> list = em.createQuery("select u from User u, UserGroupBinding b where b.groupId=:groupId and b.userId=u.id").setParameter("groupId", groupId).getResultList();
+        if (list == null || list.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+        return list;
+    }
+
+
 
     @Override
-    public List<UserGroupRequest> getMyRequests(Long userId) throws CardioDataException {
+    public List<UserGroupRequest> getRequestsToMe(Long userId) throws CardioDataException {
         if (userId == null) {
             throw new CardioDataException("getMyRequests: userId is null");
         }
@@ -149,4 +185,70 @@ public class UserGroupManager implements UserGroupManagerLocal {
         UserGroupBinding b = list.get(0);
         em.remove(b);
     }
+    
+    
+    @Override
+    public void removeUserGroupRequest(Long userGroupRequestId) throws CardioDataException {
+        if (userGroupRequestId == null){
+            throw new CardioDataException("userGroupRequestId is null");
+        }
+        UserGroupRequest req = em.find(UserGroupRequest.class, userGroupRequestId);
+        if (req == null){
+            throw new CardioDataException("cannot find UserGroupRequest with id=" + userGroupRequestId);
+        }
+        if (UserGroupRequestStatusEnum.PENDING.equals(req.getRequestStatus())){
+            throw new CardioDataException("cannot delete pending request");
+        }
+        em.remove(req);
+    }
+
+    @Override
+    public void inviteTrainee(Long trainerId, Long traineeId) throws CardioDataException {
+        if (trainerId == null){
+            throw new CardioDataException("inviteTrainee: trainerId is null");
+        }
+        if (traineeId == null){
+            throw new CardioDataException("inviteTrainee: traineeId is null");
+        }
+        UserGroup g = userMan.getTrainerDefaultGroup(trainerId);
+        if (g == null){
+            throw new CardioDataException("trainer has no default group");
+        }
+        submitRequestToGroup(trainerId, traineeId, g.getId());
+    }
+
+    
+    @Override
+    public void removeTraineeInvitation(Long trainerId, Long traineeId) throws CardioDataException {
+        System.out.println("removeTraineeInvitation: trainerId=" + trainerId + "; traineeId = " + traineeId);
+        if (trainerId == null){
+            throw new CardioDataException("removeTraineeInvitation: trainerId is null");
+        }
+        if (traineeId == null){
+            throw new CardioDataException("removeTraineeInvitation: traineeId is null");
+        }
+        UserGroup g = userMan.getTrainerDefaultGroup(trainerId);
+        if (g == null){
+            throw new CardioDataException("cannot find trainer default group");
+        }
+        UserGroupRequest req = getRequest(traineeId, trainerId, g.getId());
+        if (UserGroupRequestStatusEnum.PENDING.equals(req.getRequestStatus()) == false){
+            throw new CardioDataException("cannot remove UserGroupRequest. status = " + req.getRequestStatus());
+        }
+        em.remove(req);
+    }
+
+    @Override
+    public void removeUserGroup(Long groupId) throws CardioDataException {
+        if (groupId == null){
+            throw new CardioDataException();
+        }
+        List<User> list = getUsersInGroup(groupId);
+        if (list.isEmpty() == false){
+            throw new CardioDataException("cannot remove group - it is not empty");
+        }
+        Query q = em.createQuery("delete from UserGroupRequest r where r.groupId=:groupId").setParameter("groupId", groupId);
+        q.executeUpdate();
+    }
+    
 }

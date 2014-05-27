@@ -1,5 +1,6 @@
 package com.cardiodata.managers;
 
+import com.cardiodata.core.jpa.User;
 import com.cardiodata.core.jpa.UserGroup;
 import com.cardiodata.core.jpa.UserGroupRequest;
 import com.cardiodata.exceptions.CardioDataException;
@@ -24,8 +25,21 @@ public interface UserGroupManagerLocal {
     public void removeUserFromGroup(Long groupId, Long userId) throws CardioDataException;
     
     public List<UserGroup> getUserGroups(Long userId) throws CardioDataException;
+
+    public List<UserGroup> getGroupsOwnedByUser(Long ownerId) throws CardioDataException;
     
-    public List<UserGroupRequest> getMyRequests(Long userId) throws CardioDataException;
+    public List<User> getUsersInGroup(Long groupId) throws CardioDataException;
+    
+    public List<UserGroupRequest> getRequestsToMe(Long userId) throws CardioDataException;
     
     public List<UserGroupRequest> getMyInvitationRequests(Long userId) throws CardioDataException;
+    
+    public void removeUserGroupRequest(Long userGroupRequestId) throws CardioDataException;
+    
+    public void inviteTrainee(Long trainerId, Long traineeId) throws CardioDataException;
+    
+    public void removeTraineeInvitation(Long trainerId, Long traineeId) throws CardioDataException;
+    
+    public void removeUserGroup(Long groupId) throws CardioDataException;
+    
 }

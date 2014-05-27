@@ -2,8 +2,8 @@ package com.cardiodata.enums;
 
 /**
  *
- * @author rogvold
+ * @author sabir
  */
-public enum UserGroupPrivecyEnum {
+public enum UserGroupPrivacyEnum {
     PUBLIC, PRIVATE
 }

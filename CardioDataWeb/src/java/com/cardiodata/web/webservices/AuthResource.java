@@ -37,7 +37,6 @@ public class AuthResource {
 
     @POST
     @Produces("application/json")
-//    @Consumes("application/json")
     @Path("registerUserByEmailAndPassword")
     public Response registerUserByEmailAndPassword(@FormParam("email") String email, @FormParam("password") String password) {
         try {
@@ -54,10 +53,28 @@ public class AuthResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
+    
+    @POST
+    @Produces("application/json")
+    @Path("registerTrainerByEmailAndPassword")
+    public Response registerTrainerByEmailAndPassword(@FormParam("email") String email, @FormParam("password") String password) {
+        try {
+            System.out.println("registerUserByEmailAndPassword:");
+            System.out.println("email = " + email);
+            System.out.println("password = " + password);
+            if (email == null || password == null) {
+                throw new CardioDataException("email or password is not specified");
+            }
+            User u = userMan.registerTrainer(AccountTypeEnum.EMAIL, email, password);
+            JsonResponse<User> jr = new JsonResponse<User>(ResponseConstants.OK, u);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
 
     @POST
     @Produces("application/json")
-//    @Consumes("application/json")
     @Path("loginByEmailAndPassword")
     public Response loginByEmailAndPassword(@FormParam("email") String email, @FormParam("password") String password) {
         try {
@@ -75,7 +92,6 @@ public class AuthResource {
 
     @POST
     @Produces("application/json")
-//    @Consumes("application/json")
     @Path("updateUserInfo")
     public Response updateUserInfo(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("firstName") String firstName, @FormParam("lastName") String lastName) {
         try {

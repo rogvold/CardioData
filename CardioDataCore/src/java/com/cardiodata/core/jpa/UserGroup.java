@@ -1,6 +1,6 @@
 package com.cardiodata.core.jpa;
 
-import com.cardiodata.enums.UserGroupPrivecyEnum;
+import com.cardiodata.enums.UserGroupPrivacyEnum;
 import com.cardiodata.enums.UserGroupStatusEnum;
 import com.cardiodata.enums.UserGroupTypeEnum;
 import java.io.Serializable;
@@ -27,9 +27,9 @@ public class UserGroup implements Serializable {
     @Enumerated(EnumType.STRING)
     private UserGroupStatusEnum groupStatus;
     @Enumerated(EnumType.STRING)
-    private UserGroupPrivecyEnum groupPrivacy;
+    private UserGroupPrivacyEnum groupPrivacy;
 
-    public UserGroup(String name, String description, Long creationTimestamp, Long ownerId, UserGroupTypeEnum groupType, UserGroupStatusEnum groupStatus, UserGroupPrivecyEnum groupPrivacy) {
+    public UserGroup(String name, String description, Long creationTimestamp, Long ownerId, UserGroupTypeEnum groupType, UserGroupStatusEnum groupStatus, UserGroupPrivacyEnum groupPrivacy) {
         this.name = name;
         this.description = description;
         this.creationTimestamp = creationTimestamp;
@@ -37,6 +37,10 @@ public class UserGroup implements Serializable {
         this.groupType = groupType;
         this.groupStatus = groupStatus;
         this.groupPrivacy = groupPrivacy;
+    }
+    
+    
+    public UserGroup(){
     }
 
     public Long getId() {
@@ -63,11 +67,11 @@ public class UserGroup implements Serializable {
         this.description = description;
     }
 
-    public UserGroupPrivecyEnum getGroupPrivacy() {
+    public UserGroupPrivacyEnum getGroupPrivacy() {
         return groupPrivacy;
     }
 
-    public void setGroupPrivacy(UserGroupPrivecyEnum groupPrivacy) {
+    public void setGroupPrivacy(UserGroupPrivacyEnum groupPrivacy) {
         this.groupPrivacy = groupPrivacy;
     }
 
