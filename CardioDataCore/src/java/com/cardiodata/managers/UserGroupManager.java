@@ -9,6 +9,8 @@ import com.cardiodata.enums.UserGroupRequestStatusEnum;
 import com.cardiodata.enums.UserGroupStatusEnum;
 import com.cardiodata.enums.UserGroupTypeEnum;
 import com.cardiodata.exceptions.CardioDataException;
+import com.cardiodata.json.ResponseConstants;
+import com.cardiodata.utils.StringUtils;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -76,6 +78,8 @@ public class UserGroupManager implements UserGroupManagerLocal {
         req = new UserGroupRequest(userId, invitorId, groupId, UserGroupRequestStatusEnum.PENDING);
         return em.merge(req);
     }
+    
+    
 
     @Override
     public void acceptRequestToGroup(Long requestId) throws CardioDataException {
@@ -216,6 +220,37 @@ public class UserGroupManager implements UserGroupManagerLocal {
         }
         submitRequestToGroup(trainerId, traineeId, g.getId());
     }
+    
+    
+    @Override
+    public void inviteToGroup(Long groupId, Long trainerId, String email) throws CardioDataException {
+        if (groupId == null){
+            throw new CardioDataException("inviteToGroup: groupId is null");
+        }
+        if (email == null || "".equals(email)){
+            throw new CardioDataException("inviteToGroup: email is empty");
+        }
+        if (trainerId == null){
+            throw new CardioDataException("inviteToGroup: trainerId is null");
+        }
+        if (StringUtils.isValidEmail(email) == false){
+            throw new CardioDataException("inviteToGroup: email '" + email + "' is not valid");
+        };
+        UserGroup g = em.find(UserGroup.class, groupId);
+        if (g == null){
+            throw new CardioDataException("inviteToGroup: group with id=" + groupId + " is not found in the system");
+        }
+        User u = userMan.getUserByEmail(email);
+        if (u == null){
+            throw new CardioDataException("User with email '" + email + "' is not found");
+        }
+        Long userId = u.getId();
+        Long ownerId = g.getOwnerId();
+        if (ownerId.equals(trainerId) == false){
+            throw new CardioDataException("trainer is not the owner of the group", ResponseConstants.ACCESS_DENIED_CODE);
+        }
+        submitRequestToGroup(userId, ownerId, groupId);
+    }
 
     
     @Override
@@ -250,5 +285,6 @@ public class UserGroupManager implements UserGroupManagerLocal {
         Query q = em.createQuery("delete from UserGroupRequest r where r.groupId=:groupId").setParameter("groupId", groupId);
         q.executeUpdate();
     }
+
     
 }

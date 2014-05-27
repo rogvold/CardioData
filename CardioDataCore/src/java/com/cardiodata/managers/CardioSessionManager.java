@@ -185,6 +185,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 
         session.setName(cw.getName());
         session.setDescription(cw.getDescription());
+        session.setDataClassName(cw.getDataClassName());
         session.setCreationTimestamp(cw.getCreationTimestamp());
         session.setLastModificationTimestamp(cw.getLastModificationTimestamp() == null ? (new Date()).getTime() : cw.getLastModificationTimestamp());
         session.setOriginalSessionId(cw.getOriginalSessionId());

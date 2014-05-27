@@ -1,6 +1,7 @@
 package com.cardiodata.web.webservices;
 
 import com.cardiodata.core.jpa.User;
+import com.cardiodata.core.jpa.UserGroup;
 import com.cardiodata.enums.AccountTypeEnum;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.CardioDataExceptionWrapper;
@@ -56,14 +57,17 @@ public class GroupResource {
 
     @POST
     @Produces("application/json")
-    @Path("getTraineesOfTrainer")
-    public Response getTraineesOfTrainer(@FormParam("token") String token, @FormParam("trainerId") Long trainerId) {
+    @Path("getUsersInGroup")
+    public Response getTraineesOfTrainer(@FormParam("token") String token, @FormParam("trainerId") Long trainerId, @FormParam("groupId") Long groupId) {
         try {
             if (trainerId == null) {
                 throw new CardioDataException("trainerId is not defined");
             }
+            if (groupId == null){
+                throw new CardioDataException("groupId is not defined");
+            }
             tokenMan.assertToken(trainerId, token);
-            List<User> list = userMan.getTrainees(trainerId);
+            List<User> list = ugMan.getUsersInGroup(groupId);
             JsonResponse<List<User>> jr = new JsonResponse<List<User>>(ResponseConstants.OK, list);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
@@ -105,7 +109,6 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
     
     
 }

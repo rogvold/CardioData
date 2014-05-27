@@ -223,7 +223,7 @@ public class UserManager implements UserManagerLocal {
     }
 
     @Override
-    public List<User> getTrainees(Long trainerId) throws CardioDataException {
+    public List<User> getUsersInDefaultGroup(Long trainerId) throws CardioDataException {
         if (trainerId == null){
             throw new CardioDataException("getUserTrainers: userId is null");
         }
@@ -254,6 +254,21 @@ public class UserManager implements UserManagerLocal {
         }
         if (list.size() > 1){
             throw new CardioDataException("trainer has not two default groups");
+        }
+        return list.get(0);
+    }
+
+    @Override
+    public User getUserByEmail(String email) throws CardioDataException {
+        if (email == null || "".equals(email)){
+            throw new CardioDataException("getUserByEmail: email is empty");
+        }
+        if (StringUtils.isValidEmail(email) == false){
+            throw new CardioDataException("getUserByEmail: email '" + email + "' is not valid");
+        }
+        List<User> list = em.createQuery("select u from User u, UserAccount a where a.login=:email and a.userId=u.id").setParameter("email", email).getResultList();
+        if (list == null || list.isEmpty()){
+            return null;
         }
         return list.get(0);
     }

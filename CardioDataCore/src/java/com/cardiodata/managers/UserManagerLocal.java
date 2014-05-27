@@ -18,6 +18,8 @@ public interface UserManagerLocal {
     public User loginUser(AccountTypeEnum aType, String login, String password) throws CardioDataException;
 
     public User loginUserByEmail(String email, String password) throws CardioDataException;
+    
+    public User getUserByEmail(String email) throws CardioDataException;
 
     public User registerUser(AccountTypeEnum aType, String login, String password) throws CardioDataException;
     
@@ -33,7 +35,7 @@ public interface UserManagerLocal {
     
     public List<User> getUserTrainers(Long userId) throws CardioDataException;
     
-    public List<User> getTrainees(Long trainerId) throws CardioDataException;
+    public List<User> getUsersInDefaultGroup(Long trainerId) throws CardioDataException;
     
     public UserGroup getTrainerDefaultGroup(Long trainerId) throws CardioDataException;
     
