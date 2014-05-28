@@ -89,7 +89,7 @@ public class CardioMoodSessionResource {
         }
     }
 
-    //tested
+    
     @POST
     @Produces("application/json")
     @Path("appendDataToCardioMoodSession")
