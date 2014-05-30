@@ -28,7 +28,8 @@ public class TokenManager implements TokenManagerLocal {
             token = em.merge(token);
             return token;
         }
-        Long eStamp = token.getExpirationDate() + ApiToken.EXPIRATION_TIME;
+        //Long eStamp = token.getExpirationDate() + ApiToken.EXPIRATION_TIME;
+        Long eStamp = (new Date()).getTime() + ApiToken.EXPIRATION_TIME;
         token.setExpirationDate(eStamp);
         return em.merge(token);
     }
@@ -46,7 +47,8 @@ public class TokenManager implements TokenManagerLocal {
             return token;
         }
         Long now = (new Date()).getTime();
-        if (now - token.getExpirationDate() >= ApiToken.EXPIRATION_TIME) {
+//        if (now - token.getExpirationDate() >= ApiToken.EXPIRATION_TIME) {
+          if (now >= token.getExpirationDate()) {
             Long expStamp = (new Date()).getTime() + ApiToken.EXPIRATION_TIME;
             token.setExpirationDate(expStamp);
             token.setToken(StringUtils.generateRandomString(ApiToken.TOKEN_LENGTH));
