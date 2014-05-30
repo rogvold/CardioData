@@ -164,20 +164,19 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         deleteCardioDataItems(sessionId);
         List<CardioDataItem> dataItems = cw.getDataItems();
         CardioMoodSession session = getCardioSessionById(sessionId);
-        
-        if (session == null){
-            throw new CardioDataException("can not find session with sessionId="+sessionId+"", ResponseConstants.NORMAL_ERROR_CODE);
+
+        if (session == null) {
+            throw new CardioDataException("can not find session with sessionId=" + sessionId + "", ResponseConstants.NORMAL_ERROR_CODE);
         }
 
         if (cw.getLastModificationTimestamp() == null) {
             cw.setLastModificationTimestamp((new Date()).getTime());
         }
-        
-        if (session.getLastModificationTimestamp() == null){
+
+        if (session.getLastModificationTimestamp() == null) {
             session.setLastModificationTimestamp((new Date()).getTime());
         }
-        
-        
+
         Long extModifDate = Math.min(cw.getLastModificationTimestamp(), (new Date()).getTime());
         if (extModifDate < session.getLastModificationTimestamp()) {
             throw new CardioDataException("session was updated on server", ResponseConstants.SESSION_IS_MODIFIED_ON_SERVER_CODE);
@@ -247,7 +246,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 
     @Override
     public List<CardioMoodSession> getCardioSessionsOfUser(Long userId, Long serverId) throws CardioDataException {
-        Query q = em.createQuery("select c from CardioSession c where c.userId = :userId and c.serverId = :serverId").setParameter("userId", userId).setParameter("serverId", serverId);
+        Query q = em.createQuery("select c from CardioMoodSession c where c.userId = :userId and c.serverId = :serverId").setParameter("userId", userId).setParameter("serverId", serverId);
         List<CardioMoodSession> list = q.getResultList();
         if (list == null || list.isEmpty()) {
             return Collections.EMPTY_LIST;
@@ -257,7 +256,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 
     @Override
     public boolean isSessionOfUser(Long userId, Long sessionId) throws CardioDataException {
-        Query q = em.createQuery("select c from CardioSession c where c.userId = :userId and c.id = :sessionId").setParameter("userId", userId).setParameter("sessionId", sessionId);
+        Query q = em.createQuery("select c from CardioMoodSession c where c.userId = :userId and c.id = :sessionId").setParameter("userId", userId).setParameter("sessionId", sessionId);
         List<CardioMoodSession> list = q.getResultList();
         if (list == null || list.isEmpty()) {
             return false;
