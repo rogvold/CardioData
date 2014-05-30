@@ -123,6 +123,21 @@ public class AuthResource {
         }
     }
 
+
+    @POST
+    @Produces("application/json")
+    @Path("updateUserProfile")
+    public Response updateUserProfile(@FormParam("token") String token, @FormParam("serializedUser") String serializedUser) {
+        try {
+            userMan.updateUserProfile(token, serializedUser);
+            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+
+    
     /**
      * Creates a new instance of AuthResource
      */

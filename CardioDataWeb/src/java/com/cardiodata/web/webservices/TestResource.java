@@ -1,7 +1,7 @@
 package com.cardiodata.web.webservices;
 
 import com.cardiodata.utils.CORSUtils;
-import com.cardiodata.core.jpa.CardioSession;
+import com.cardiodata.core.jpa.CardioMoodSession;
 import com.google.gson.Gson;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -50,8 +50,8 @@ public class TestResource {
     @Produces("application/json")
     @Path("/test2")
     public Response test2() {
-        CardioSession cs = new CardioSession(Long.MIN_VALUE, "ololo", "llll", Long.MIN_VALUE, Long.MIN_VALUE, Long.MIN_VALUE, "ololo", Long.MAX_VALUE, Long.MAX_VALUE);
-        String s = (new Gson()).toJson(cs, CardioSession.class);
+        CardioMoodSession cs = new CardioMoodSession(Long.MIN_VALUE, "ololo", "llll", Long.MIN_VALUE, Long.MIN_VALUE, Long.MIN_VALUE, "ololo", Long.MAX_VALUE, Long.MAX_VALUE);
+        String s = (new Gson()).toJson(cs, CardioMoodSession.class);
         return CORSUtils.makeCORS(Response.ok(s, MediaType.APPLICATION_JSON));
     }
 //    @POST

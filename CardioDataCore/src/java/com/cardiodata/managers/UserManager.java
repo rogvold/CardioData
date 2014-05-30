@@ -15,6 +15,7 @@ import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.ResponseConstants;
 import com.cardiodata.json.TokenManagerLocal;
 import com.cardiodata.utils.StringUtils;
+import com.google.gson.Gson;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -197,6 +198,46 @@ public class UserManager implements UserManagerLocal {
         u.setLastModificationDate((new Date()).getTime());
         return em.merge(u);
     }
+    
+    
+    @Override
+    public User updateUserProfile(String token, String serializedUser) throws CardioDataException {
+        if (token == null){
+            throw new CardioDataException("token is not specified", ResponseConstants.INVALID_TOKEN_CODE);
+        }
+        User u = getUserByToken(token);
+        if (u == null){
+            throw new CardioDataException("user with specified token is not found");
+        }
+        if (serializedUser == null || "".equals(serializedUser)){
+            throw new CardioDataException("serializedUser is empty");
+        }
+        User updatedUser = null;
+        try {
+            updatedUser = (new Gson()).fromJson(serializedUser, User.class);
+        } catch (Exception e) {
+            throw new CardioDataException("cannot deserialize serializedUser. error message: " + e.getMessage());
+        }
+        
+        if (updatedUser == null){
+                throw new CardioDataException("updatedUser is null");
+            }
+        if (updatedUser.getLastModificationDate() == null){
+            throw new CardioDataException("last modification timestamp is not specified in serialized user");
+        }
+        if (u.getLastLoginDate() > updatedUser.getLastModificationDate()){
+            throw new CardioDataException("Profile on server is more fresh then yours.", ResponseConstants.SYNCHRONIZATION_ERROR_CODE);
+        }
+        u.setFirstName(updatedUser.getFirstName());
+        u.setLastName(updatedUser.getLastName());
+        u.setHeight(updatedUser.getHeight());
+        u.setWeight(updatedUser.getWeight());
+        u.setLastModificationDate(updatedUser.getLastModificationDate());
+        
+        return em.merge(u);
+        
+    }
+    
 
     @Override
     public List<User> getAllTrainers() {
@@ -275,5 +316,5 @@ public class UserManager implements UserManagerLocal {
         }
         return list.get(0);
     }
-    
+
 }

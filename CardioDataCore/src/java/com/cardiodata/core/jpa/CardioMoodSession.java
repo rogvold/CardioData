@@ -9,7 +9,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="cardiosession")
-public class CardioSession implements Serializable {
+public class CardioMoodSession implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -25,7 +25,7 @@ public class CardioSession implements Serializable {
     protected Long lastModificationTimestamp;
     protected Long originalSessionId;
 
-    public CardioSession(Long id, String name, String description, Long serverId, Long userId, Long creationTimestamp, String dataClassName, Long originalSessionId, Long lastModificationTimestamp) {
+    public CardioMoodSession(Long id, String name, String description, Long serverId, Long userId, Long creationTimestamp, String dataClassName, Long originalSessionId, Long lastModificationTimestamp) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -36,7 +36,7 @@ public class CardioSession implements Serializable {
         this.originalSessionId = originalSessionId;
     }
 
-    public CardioSession() {
+    public CardioMoodSession() {
     }
 
     public String getDataClassName() {
@@ -121,10 +121,10 @@ public class CardioSession implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CardioSession)) {
+        if (!(object instanceof CardioMoodSession)) {
             return false;
         }
-        CardioSession other = (CardioSession) object;
+        CardioMoodSession other = (CardioMoodSession) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -133,6 +133,6 @@ public class CardioSession implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cardiodata.core.jpa.CardioSession[ id=" + id + " ]";
+        return "com.cardiodata.core.jpa.CardioMoodSession[ id=" + id + " ]";
     }
 }

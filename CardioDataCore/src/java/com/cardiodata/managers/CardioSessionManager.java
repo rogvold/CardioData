@@ -1,7 +1,7 @@
 package com.cardiodata.managers;
 
 import com.cardiodata.core.jpa.CardioDataItem;
-import com.cardiodata.core.jpa.CardioSession;
+import com.cardiodata.core.jpa.CardioMoodSession;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.CardioSessionWithData;
 import com.cardiodata.json.ResponseConstants;
@@ -24,11 +24,11 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     EntityManager em;
 
     @Override
-    public CardioSession createCardioSession(Long userId, Long serverId, String dataClassName) throws CardioDataException {
+    public CardioMoodSession createCardioSession(Long userId, Long serverId, String dataClassName) throws CardioDataException {
         if (userId == null || serverId == null) {
             throw new CardioDataException("userId or serverId is null");
         }
-        CardioSession cs = new CardioSession();
+        CardioMoodSession cs = new CardioMoodSession();
         cs.setUserId(userId);
         cs.setServerId(serverId);
         cs.setCreationTimestamp((new Date()).getTime());
@@ -37,8 +37,8 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
 
     @Override
-    public CardioSession createCardioSession(CardioSession cs) throws CardioDataException {
-        CardioSession csess = createCardioSession(cs.getUserId(), cs.getServerId(), cs.getDataClassName());
+    public CardioMoodSession createCardioSession(CardioMoodSession cs) throws CardioDataException {
+        CardioMoodSession csess = createCardioSession(cs.getUserId(), cs.getServerId(), cs.getDataClassName());
         csess.setDataClassName(cs.getDataClassName());
         csess.setDescription(cs.getDescription());
         csess.setName(cs.getName());
@@ -47,7 +47,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
 
     @Override
-    public CardioSession updateCardioSession(CardioSession cs) throws CardioDataException {
+    public CardioMoodSession updateCardioSession(CardioMoodSession cs) throws CardioDataException {
         if (cs.getId() == null) {
             throw new CardioDataException("cs id is null");
         }
@@ -55,11 +55,11 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
 
     @Override
-    public CardioSession updateCardioSession(Long sessionId, String newName, String newDescription) throws CardioDataException {
+    public CardioMoodSession updateCardioSession(Long sessionId, String newName, String newDescription) throws CardioDataException {
         if (sessionId == null) {
             throw new CardioDataException("sessionId is null");
         }
-        CardioSession cs = getCardioSessionById(sessionId);
+        CardioMoodSession cs = getCardioSessionById(sessionId);
         if (newName == null || "".equals(newName)) {
             throw new CardioDataException("new name is empty");
         }
@@ -70,11 +70,11 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
 
     @Override
-    public CardioSession renameCardioSession(Long sessionId, String newName) throws CardioDataException {
+    public CardioMoodSession renameCardioSession(Long sessionId, String newName) throws CardioDataException {
         if (sessionId == null) {
             throw new CardioDataException("sessionId is null");
         }
-        CardioSession cs = getCardioSessionById(sessionId);
+        CardioMoodSession cs = getCardioSessionById(sessionId);
         if (newName == null || "".equals(newName)) {
             throw new CardioDataException("new name is empty");
         }
@@ -84,14 +84,14 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
 
     @Override
-    public CardioSession getCardioSessionById(Long sessionId) throws CardioDataException {
-        CardioSession cs = em.find(CardioSession.class, sessionId);
+    public CardioMoodSession getCardioSessionById(Long sessionId) throws CardioDataException {
+        CardioMoodSession cs = em.find(CardioMoodSession.class, sessionId);
         return cs;
     }
 
     @Override
     public void saveCardioSessionItems(Long sessionId, String jsonList) throws CardioDataException {
-        CardioSession cs = getCardioSessionById(sessionId);
+        CardioMoodSession cs = getCardioSessionById(sessionId);
         if (cs == null) {
             throw new CardioDataException("session is not found");
         }
@@ -104,7 +104,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
 
     private List<CardioDataItem> getSessionCardioItems(Long sessionId) throws CardioDataException {
-        CardioSession cs = getCardioSessionById(sessionId);
+        CardioMoodSession cs = getCardioSessionById(sessionId);
         if (cs == null) {
             throw new CardioDataException("cardiosession with id=" + sessionId + " is not found");
         }
@@ -118,7 +118,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 
     @Override
     public CardioSessionWithData getCardioSessionWihData(Long sessionId) throws CardioDataException {
-        CardioSession cs = getCardioSessionById(sessionId);
+        CardioMoodSession cs = getCardioSessionById(sessionId);
         if (cs == null) {
             throw new CardioDataException("cardiosession with id=" + sessionId + " is not found");
         }
@@ -134,13 +134,13 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         CardioSessionWithData cw = (new Gson()).fromJson(jsonIncomingData, CardioSessionWithData.class);
         Long sessionId = cw.getId();
         if (sessionId == null) {
-            CardioSession c = new CardioSession();
+            CardioMoodSession c = new CardioMoodSession();
             c = em.merge(c);
             sessionId = c.getId();
         }
         cw.setId(sessionId);
         List<CardioDataItem> dataItems = cw.getDataItems();
-        CardioSession session = getCardioSessionById(sessionId);
+        CardioMoodSession session = getCardioSessionById(sessionId);
 
 //        Long extModifDate = Math.min(cw.getLastModificationTimestamp(), (new Date()).getTime());
 //        if (extModifDate < session.getLastModificationTimestamp()) {
@@ -163,7 +163,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         System.out.println("rewriteCardioSessionData: sessionId = " + sessionId + "");
         deleteCardioDataItems(sessionId);
         List<CardioDataItem> dataItems = cw.getDataItems();
-        CardioSession session = getCardioSessionById(sessionId);
+        CardioMoodSession session = getCardioSessionById(sessionId);
         
         if (session == null){
             throw new CardioDataException("can not find session with sessionId="+sessionId+"", ResponseConstants.NORMAL_ERROR_CODE);
@@ -246,9 +246,9 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
 
     @Override
-    public List<CardioSession> getCardioSessionsOfUser(Long userId, Long serverId) throws CardioDataException {
+    public List<CardioMoodSession> getCardioSessionsOfUser(Long userId, Long serverId) throws CardioDataException {
         Query q = em.createQuery("select c from CardioSession c where c.userId = :userId and c.serverId = :serverId").setParameter("userId", userId).setParameter("serverId", serverId);
-        List<CardioSession> list = q.getResultList();
+        List<CardioMoodSession> list = q.getResultList();
         if (list == null || list.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
@@ -258,7 +258,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     @Override
     public boolean isSessionOfUser(Long userId, Long sessionId) throws CardioDataException {
         Query q = em.createQuery("select c from CardioSession c where c.userId = :userId and c.id = :sessionId").setParameter("userId", userId).setParameter("sessionId", sessionId);
-        List<CardioSession> list = q.getResultList();
+        List<CardioMoodSession> list = q.getResultList();
         if (list == null || list.isEmpty()) {
             return false;
         }
@@ -270,7 +270,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         if (sessionId == null) {
             throw new CardioDataException("sessionId is null");
         }
-        CardioSession c = getCardioSessionById(sessionId);
+        CardioMoodSession c = getCardioSessionById(sessionId);
         if (c == null) {
             throw new CardioDataException("cardio session with id = " + sessionId + " is not found in the system");
         }

@@ -1,13 +1,13 @@
 package com.cardiodata.json;
 
 import com.cardiodata.core.jpa.CardioDataItem;
-import com.cardiodata.core.jpa.CardioSession;
+import com.cardiodata.core.jpa.CardioMoodSession;
 import java.util.List;
 
 /**
  * @author Shaykhlislamov Sabir (email: sha-sabir@yandex.ru)
  */
-public class CardioSessionWithData extends CardioSession {
+public class CardioSessionWithData extends CardioMoodSession {
 
     protected List<CardioDataItem> dataItems;
 

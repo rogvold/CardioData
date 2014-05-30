@@ -31,6 +31,8 @@ public class User implements Serializable {
     private Long lastLoginDate;
     private Long lastModificationDate;
     
+    private Double weight;
+    private Double height;
 
     public AccountStatusEnum getAccountStatus() {
         return accountStatus;
@@ -104,6 +106,23 @@ public class User implements Serializable {
         this.lastModificationDate = lastModificationDate;
     }
 
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+
+    public Double getHeight() {
+        return height;
+    }
+
+    public void setHeight(Double height) {
+        this.height = height;
+    }
+
+    
     
     
 

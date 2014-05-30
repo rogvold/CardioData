@@ -31,6 +31,8 @@ public interface UserManagerLocal {
 
     public User updateUserProfile(Long userId, String firstName, String lastName) throws CardioDataException;
     
+    public User updateUserProfile(String token, String serializedUser) throws CardioDataException;
+    
     public List<User> getAllTrainers();
     
     public List<User> getUserTrainers(Long userId) throws CardioDataException;

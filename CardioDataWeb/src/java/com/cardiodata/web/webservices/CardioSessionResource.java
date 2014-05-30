@@ -1,6 +1,6 @@
 package com.cardiodata.web.webservices;
 
-import com.cardiodata.core.jpa.CardioSession;
+import com.cardiodata.core.jpa.CardioMoodSession;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.*;
 import com.cardiodata.managers.CardioSessionManagerLocal;
@@ -38,8 +38,8 @@ public class CardioSessionResource {
     public Response createCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId) {
         try {
             tokenMan.assertToken(userId, token);
-            CardioSession cs = cardMan.createCardioSession(userId, serverId, "JsonRRInterval");
-            JsonResponse<CardioSession> jr = new JsonResponse<CardioSession>(ResponseConstants.OK, cs);
+            CardioMoodSession cs = cardMan.createCardioSession(userId, serverId, "JsonRRInterval");
+            JsonResponse<CardioMoodSession> jr = new JsonResponse<CardioMoodSession>(ResponseConstants.OK, cs);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
@@ -53,8 +53,8 @@ public class CardioSessionResource {
     public Response getCardioSessionsOfUser(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId) {
         try {
             tokenMan.assertToken(userId, token);
-            List<CardioSession> list = cardMan.getCardioSessionsOfUser(userId, serverId);
-            JsonResponse<List<CardioSession>> jr = new JsonResponse<List<CardioSession>>(ResponseConstants.OK, list);
+            List<CardioMoodSession> list = cardMan.getCardioSessionsOfUser(userId, serverId);
+            JsonResponse<List<CardioMoodSession>> jr = new JsonResponse<List<CardioMoodSession>>(ResponseConstants.OK, list);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
@@ -111,8 +111,8 @@ public class CardioSessionResource {
     public Response updateCardioSessionInfo(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId, @FormParam("name") String name, @FormParam("description") String description) {
         try {
             tokenMan.assertToken(userId, token);
-            CardioSession cs = cardMan.updateCardioSession(sessionId, name, description);
-            JsonResponse<CardioSession> jr = new JsonResponse<CardioSession>(ResponseConstants.OK, cs);
+            CardioMoodSession cs = cardMan.updateCardioSession(sessionId, name, description);
+            JsonResponse<CardioMoodSession> jr = new JsonResponse<CardioMoodSession>(ResponseConstants.OK, cs);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
@@ -139,8 +139,8 @@ public class CardioSessionResource {
     public Response renameCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId,  @FormParam("sessionId") Long sessionId, @FormParam("name") String newName) {
         try {
             tokenMan.assertToken(userId, token);
-            CardioSession cs = cardMan.renameCardioSession(sessionId, newName);
-            JsonResponse<CardioSession> jr = new JsonResponse<CardioSession>(ResponseConstants.OK, cs);
+            CardioMoodSession cs = cardMan.renameCardioSession(sessionId, newName);
+            JsonResponse<CardioMoodSession> jr = new JsonResponse<CardioMoodSession>(ResponseConstants.OK, cs);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
