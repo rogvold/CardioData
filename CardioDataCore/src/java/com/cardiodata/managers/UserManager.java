@@ -95,7 +95,7 @@ public class UserManager implements UserManagerLocal {
         }
         ApiToken t = list.get(0);
         if (t.getExpirationDate() < new Date().getTime()) {
-            throw new CardioDataException("token is expired");
+            throw new CardioDataException("token is expired", ResponseConstants.INVALID_TOKEN_CODE);
         }
         return getUserById(t.getUserId());
     }
