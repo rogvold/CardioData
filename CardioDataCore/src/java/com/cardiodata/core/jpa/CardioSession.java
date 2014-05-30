@@ -8,6 +8,7 @@ import javax.persistence.*;
  * @author Shaykhlislamov Sabir (email: sha-sabir@yandex.ru)
  */
 @Entity
+@Table(name="cardiosession")
 public class CardioSession implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -148,6 +148,7 @@ public class UserManager implements UserManagerLocal {
         u.setAccountStatus(AccountStatusEnum.FREE);
         u.setUserRole(UserRoleEnum.USER);
         u.setUserStatus(UserStatusEnum.ACTIVE);
+        u.setLastModificationDate(0L);
         u = em.merge(u);
 
         UserAccount acc = new UserAccount(login, password, aType, u.getId());
@@ -170,6 +171,7 @@ public class UserManager implements UserManagerLocal {
         u.setAccountStatus(AccountStatusEnum.FREE);
         u.setUserRole(UserRoleEnum.TRAINER);
         u.setUserStatus(UserStatusEnum.ACTIVE);
+        u.setLastModificationDate(0L);
         u = em.merge(u);
 
         UserAccount acc = new UserAccount(login, password, aType, u.getId());
@@ -192,6 +194,7 @@ public class UserManager implements UserManagerLocal {
         }
         u.setFirstName(firstName);
         u.setLastName(lastName);
+        u.setLastModificationDate((new Date()).getTime());
         return em.merge(u);
     }
 

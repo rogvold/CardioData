@@ -58,8 +58,8 @@ public class TestResource {
 //    @Produces("application/json")
 //    @Path("/test2")
 //    public Response test2(@HeaderParam("Access-Control-Request-Headers") String requestH) {
-//        CardioSession cs = new CardioSession(Long.MIN_VALUE, "ololo", "llll", Long.MIN_VALUE, Long.MIN_VALUE, Long.MIN_VALUE, "ololo");
-//        String s = (new Gson()).toJson(cs, CardioSession.class);
+//        CardioMoodSession cs = new CardioMoodSession(Long.MIN_VALUE, "ololo", "llll", Long.MIN_VALUE, Long.MIN_VALUE, Long.MIN_VALUE, "ololo");
+//        String s = (new Gson()).toJson(cs, CardioMoodSession.class);
 //        return CORSUtils.makeCORS(Response.ok(s, MediaType.APPLICATION_JSON), requestH);
 //    }
 

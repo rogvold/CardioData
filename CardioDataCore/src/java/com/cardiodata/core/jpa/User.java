@@ -29,6 +29,8 @@ public class User implements Serializable {
     private UserStatusEnum userStatus;
     private Long registrationDate;
     private Long lastLoginDate;
+    private Long lastModificationDate;
+    
 
     public AccountStatusEnum getAccountStatus() {
         return accountStatus;
@@ -93,6 +95,17 @@ public class User implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public Long getLastModificationDate() {
+        return lastModificationDate;
+    }
+
+    public void setLastModificationDate(Long lastModificationDate) {
+        this.lastModificationDate = lastModificationDate;
+    }
+
+    
+    
 
     @Override
     public int hashCode() {
