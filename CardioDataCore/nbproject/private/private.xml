@@ -7,8 +7,10 @@
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/enums/UserRoleEnum.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/core/jpa/User.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/managers/UserManagerLocal.java</file>
+            <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/core/jpa/CardioSession.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/core/jpa/UserAccount.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/managers/UserManager.java</file>
+            <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/json/entity/JsonRRInterval.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/managers/UserGroupManager.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/managers/UserGroupManagerLocal.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/managers/CardioSessionManager.java</file>
