@@ -286,5 +286,20 @@ public class UserGroupManager implements UserGroupManagerLocal {
         q.executeUpdate();
     }
 
+    @Override
+    public List<User> getUserTrainers(Long userId) throws CardioDataException {
+        if (userId == null){
+            throw new CardioDataException("getUserTrainers: userIs is not specified");
+        }
+        List<User> list = em.createQuery("select u from User u, UserGroupBinding ub, UserGroup ug where ug.id=ub.groupId and ub.userId=u.id and u.id=:userId and ug.groupType=:gType ")
+                .setParameter("userId", userId)
+                .setParameter("gType", UserGroupTypeEnum.DEFAULT)
+                .getResultList();
+        if (list == null || list.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+        return list;
+    }
+
     
 }

@@ -294,7 +294,7 @@ public class UserManager implements UserManagerLocal {
                 .setParameter("gType", UserGroupTypeEnum.DEFAULT)
                 .setParameter("trainerId", trainerId).getResultList();
         if (list == null || list.isEmpty()){
-            return null;
+            throw new CardioDataException("trainer has no default group");
         }
         if (list.size() > 1){
             throw new CardioDataException("trainer has not two default groups");

@@ -44,4 +44,6 @@ public interface UserGroupManagerLocal {
     
     public void removeUserGroup(Long groupId) throws CardioDataException;
     
+    public List<User> getUserTrainers(Long userId) throws CardioDataException;
+    
 }
