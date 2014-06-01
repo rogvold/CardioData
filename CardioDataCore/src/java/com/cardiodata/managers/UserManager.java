@@ -4,6 +4,7 @@ import com.cardiodata.core.jpa.ApiToken;
 import com.cardiodata.core.jpa.User;
 import com.cardiodata.core.jpa.UserAccount;
 import com.cardiodata.core.jpa.UserGroup;
+import com.cardiodata.core.jpa.UserGroupBinding;
 import com.cardiodata.enums.AccountStatusEnum;
 import com.cardiodata.enums.AccountTypeEnum;
 import com.cardiodata.enums.UserGroupPrivacyEnum;
@@ -182,7 +183,12 @@ public class UserManager implements UserManagerLocal {
         em.merge(t);
         
         UserGroup g = new UserGroup("Default group", "", (new Date()).getTime(), u.getId(), UserGroupTypeEnum.DEFAULT, UserGroupStatusEnum.ACTIVE, UserGroupPrivacyEnum.PUBLIC);
-        em.merge(g);
+        g = em.merge(g);
+        
+        UserGroupBinding gb = new UserGroupBinding();
+        gb.setGroupId(g.getId());
+        gb.setUserId(u.getId());
+        em.merge(gb);
         
         return u;
     }
