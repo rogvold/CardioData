@@ -46,4 +46,6 @@ public interface UserGroupManagerLocal {
     
     public List<User> getUserTrainers(Long userId) throws CardioDataException;
     
+    public List<User> getInvitedTrainees(Long trainerId) throws CardioDataException;
+    
 }

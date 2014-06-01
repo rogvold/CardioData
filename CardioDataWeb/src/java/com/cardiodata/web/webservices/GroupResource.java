@@ -179,4 +179,18 @@ public class GroupResource {
         }
     }
     
+    @POST
+    @Produces("application/json")
+    @Path("getInvitedTrainees")
+    public Response getInvitedTrainees(@FormParam("token") String trainerToken, @FormParam("trainerId") Long trainerId) {
+        try {
+            tokenMan.assertToken(trainerId, trainerToken);
+            List<User> list = ugMan.getInvitedTrainees(trainerId);
+            JsonResponse<List<User>> jr = new JsonResponse<List<User>>(ResponseConstants.OK, list);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
 }

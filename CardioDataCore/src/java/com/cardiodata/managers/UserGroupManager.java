@@ -27,6 +27,7 @@ import javax.persistence.Query;
  */
 @Stateless
 public class UserGroupManager implements UserGroupManagerLocal {
+    
 
 
     @PersistenceContext(unitName = "CardioDataCorePU")
@@ -150,6 +151,8 @@ public class UserGroupManager implements UserGroupManagerLocal {
         }
         return list;
     }
+    
+    
 
 
 
@@ -297,6 +300,24 @@ public class UserGroupManager implements UserGroupManagerLocal {
         List<User> list = em.createQuery("select u from User u, UserGroupBinding ub, UserGroup ug where ug.id=ub.groupId and ub.userId=u.id and u.id=:userId and ug.groupType=:gType ")
                 .setParameter("userId", userId)
                 .setParameter("gType", UserGroupTypeEnum.DEFAULT)
+                .getResultList();
+        if (list == null || list.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+        return list;
+    }
+
+    @Override
+    public List<User> getInvitedTrainees(Long trainerId) throws CardioDataException {
+        if (trainerId == null){
+            throw new CardioDataException("trainerId is not specified");
+        }
+        UserGroup g = userMan.getTrainerDefaultGroup(trainerId);
+        if (g == null){
+            throw new CardioDataException("default group is not found");
+        }
+        List<User> list = em.createQuery("select u from User u, UserGroupRequest r where r.userId=u.id and r.groupId=:groupId")
+                .setParameter("groupId", g.getId())
                 .getResultList();
         if (list == null || list.isEmpty()){
             return Collections.EMPTY_LIST;
