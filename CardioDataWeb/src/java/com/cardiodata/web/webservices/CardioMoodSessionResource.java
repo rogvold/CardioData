@@ -45,7 +45,7 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("createCardioMoodSession")
-    public Response createMoodCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("className") String className) {
+    public Response createCardioMoodSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("className") String className) {
         try {
             tokenMan.assertToken(userId, token);
             if (className == null || "".equals(className)){
@@ -148,7 +148,7 @@ public class CardioMoodSessionResource {
 
     @POST
     @Produces("application/json")
-    @Path("renameMoodCardioSession")
+    @Path("renameCardioMoodSession")
     public Response renameCardioMoodSession(@FormParam("token") String token, @FormParam("userId") Long userId,  @FormParam("sessionId") Long sessionId, @FormParam("name") String newName) {
         try {
             tokenMan.assertToken(userId, token);
