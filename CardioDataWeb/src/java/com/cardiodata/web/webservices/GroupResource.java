@@ -107,6 +107,24 @@ public class GroupResource {
         
     @POST
     @Produces("application/json")
+    @Path("inviteTraineeByEmail")
+    public Response inviteTraineeByEmail(@FormParam("token") String token, @FormParam("trainerId") Long trainerId, @FormParam("traineeEmail") String traineeEmail) {
+        try {
+            if (trainerId == null) {
+                throw new CardioDataException("trainerId is not defined");
+            }
+            tokenMan.assertToken(trainerId, token);
+            ugMan.inviteTrainee(trainerId, traineeEmail);
+            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
+        
+    @POST
+    @Produces("application/json")
     @Path("acceptInvitation")
     public Response acceptInvitation(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("requestId") Long requestId) {
         try {

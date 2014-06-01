@@ -38,6 +38,8 @@ public interface UserGroupManagerLocal {
     
     public void inviteTrainee(Long trainerId, Long traineeId) throws CardioDataException;
     
+    public void inviteTrainee(Long trainerId, String traineeEmail) throws CardioDataException;
+    
     public void inviteToGroup(Long groupId, Long trainerId, String email) throws CardioDataException;
     
     public void removeTraineeInvitation(Long trainerId, Long traineeId) throws CardioDataException;

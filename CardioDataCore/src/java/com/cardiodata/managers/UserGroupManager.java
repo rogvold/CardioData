@@ -220,6 +220,21 @@ public class UserGroupManager implements UserGroupManagerLocal {
         if (traineeId == null){
             throw new CardioDataException("inviteTrainee: traineeId is null");
         }
+        User trainer = userMan.getUserById(trainerId);
+        if (trainer == null){
+            throw new CardioDataException("trainer is not found");
+        }
+        if (UserRoleEnum.TRAINER.equals(trainer.getUserRole()) == false){
+            throw new CardioDataException("user with id " + trainerId + " is not a trainer");
+        }
+        User trainee = userMan.getUserById(traineeId);
+        if (trainee == null){
+            throw new CardioDataException("trainee is not found");
+        }
+        if (UserRoleEnum.USER.equals(trainee.getUserRole()) == false){
+            throw new CardioDataException("user with id = " + traineeId + " is not a trainee");
+        }
+        
         UserGroup g = userMan.getTrainerDefaultGroup(trainerId);
         if (g == null){
             throw new CardioDataException("trainer has no default group");
@@ -323,6 +338,21 @@ public class UserGroupManager implements UserGroupManagerLocal {
             return Collections.EMPTY_LIST;
         }
         return list;
+    }
+
+    @Override
+    public void inviteTrainee(Long trainerId, String traineeEmail) throws CardioDataException {
+        if (trainerId == null){
+            throw new CardioDataException("traineeId is not defined");
+        }
+        if (traineeEmail == null || "".equals(traineeEmail)){
+            throw new CardioDataException("traineeEmail is not specified");
+        }
+        User trainee = userMan.getUserByEmail(traineeEmail);
+        if (trainee == null){
+            throw new CardioDataException("Trainee with specified email is not found in the system.");
+        }
+        inviteTrainee(trainerId, trainee.getId());
     }
 
     
