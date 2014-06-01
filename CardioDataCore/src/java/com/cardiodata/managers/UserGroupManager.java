@@ -8,6 +8,7 @@ import com.cardiodata.enums.UserGroupPrivacyEnum;
 import com.cardiodata.enums.UserGroupRequestStatusEnum;
 import com.cardiodata.enums.UserGroupStatusEnum;
 import com.cardiodata.enums.UserGroupTypeEnum;
+import com.cardiodata.enums.UserRoleEnum;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.ResponseConstants;
 import com.cardiodata.utils.StringUtils;
@@ -141,7 +142,9 @@ public class UserGroupManager implements UserGroupManagerLocal {
         if (groupId == null){
             throw new CardioDataException("getUsersInGroup: groupId is null");
         }
-        List<User> list = em.createQuery("select u from User u, UserGroupBinding b where b.groupId=:groupId and b.userId=u.id").setParameter("groupId", groupId).getResultList();
+        List<User> list = em.createQuery("select u from User u, UserGroupBinding b where b.groupId=:groupId and b.userId=u.id and u.userRole=:uRole")
+                .setParameter("uRole", UserRoleEnum.USER)
+                .setParameter("groupId", groupId).getResultList();
         if (list == null || list.isEmpty()){
             return Collections.EMPTY_LIST;
         }
