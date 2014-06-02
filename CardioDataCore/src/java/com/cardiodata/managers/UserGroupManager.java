@@ -239,7 +239,7 @@ public class UserGroupManager implements UserGroupManagerLocal {
         if (g == null){
             throw new CardioDataException("trainer has no default group");
         }
-        submitRequestToGroup(trainerId, traineeId, g.getId());
+        submitRequestToGroup(traineeId, trainerId, g.getId());
     }
     
     
