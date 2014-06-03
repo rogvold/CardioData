@@ -32,6 +32,12 @@ public interface UserGroupManagerLocal {
     
     public List<UserGroupRequest> getRequestsToMe(Long userId) throws CardioDataException;
     
+    public List<User> getMyInvitorsTrainers(Long userId) throws CardioDataException;
+    
+    public void rejectToTrainer(Long userId, Long trainerId) throws CardioDataException;
+    
+    public void acceptToTrainer(Long userId, Long trainerId) throws CardioDataException;
+    
     public List<UserGroupRequest> getMyInvitationRequests(Long userId) throws CardioDataException;
     
     public void removeUserGroupRequest(Long userGroupRequestId) throws CardioDataException;

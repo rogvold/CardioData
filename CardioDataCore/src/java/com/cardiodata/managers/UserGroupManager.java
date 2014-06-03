@@ -355,5 +355,49 @@ public class UserGroupManager implements UserGroupManagerLocal {
         inviteTrainee(trainerId, trainee.getId());
     }
 
+    @Override
+    public List<User> getMyInvitorsTrainers(Long userId) throws CardioDataException {
+        if (userId == null){
+            throw new CardioDataException("userId is not specified");
+        }
+        User u = userMan.getUserById(userId);
+        if (u == null){
+            throw new CardioDataException("user with id=" + userId + " is not found in the system");
+        }
+        if (UserRoleEnum.USER.equals(u.getUserRole()) == false){
+            throw new CardioDataException("user with id=" + userId +" is not a USER - his role is '" + u.getUserRole() + "'");
+        }
+        List<User> list = em.createQuery("select t from User t, UserGroupRequest r where r.userId=:userId and r.invitorId=t.id")
+                .setParameter("userId", userId)
+                .getResultList();
+        if (list == null || list.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+        return list;
+    }
+
+    @Override
+    public void rejectToTrainer(Long userId, Long trainerId) throws CardioDataException {
+        if (trainerId == null){
+            throw new CardioDataException("trainerId is null");
+        }
+        UserGroup g = userMan.getTrainerDefaultGroup(trainerId);
+        UserGroupRequest r = getRequest(userId, trainerId, g.getId());
+        if (r == null){
+            return;
+        }
+        em.remove(r);
+    }
+
+    @Override
+    public void acceptToTrainer(Long userId, Long trainerId) throws CardioDataException {
+        if (trainerId == null){
+            throw new CardioDataException("trainerId is null");
+        }
+        UserGroup g = userMan.getTrainerDefaultGroup(trainerId);
+        UserGroupRequest r = getRequest(userId, trainerId, g.getId());
+        acceptRequestToGroup(r.getId());
+    }
+
     
 }

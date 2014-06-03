@@ -67,7 +67,7 @@ public class GroupResource {
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
-    }   
+    }
     
     
     @POST
@@ -205,6 +205,64 @@ public class GroupResource {
             tokenMan.assertToken(trainerId, trainerToken);
             List<User> list = ugMan.getInvitedTrainees(trainerId);
             JsonResponse<List<User>> jr = new JsonResponse<List<User>>(ResponseConstants.OK, list);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
+    @POST
+    @Produces("application/json")
+    @Path("getUserInvitorsTrainers")
+    public Response getUserInvitorsTrainers(@FormParam("token") String token, @FormParam("userId") Long userId) {
+        try {
+            if (userId == null) {
+                throw new CardioDataException("userId is not defined");
+            }
+            tokenMan.assertToken(userId, token);
+            List<User> list = ugMan.getMyInvitorsTrainers(userId);
+            JsonResponse<List<User>> jr = new JsonResponse<List<User>>(ResponseConstants.OK, list);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
+        
+    @POST
+    @Produces("application/json")
+    @Path("acceptToTrainer")
+    public Response getUserInvitorsTrainers(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("trainerId") Long trainerId) {
+        try {
+            if (userId == null) {
+                throw new CardioDataException("userId is not defined");
+            }
+            if (trainerId == null) {
+                throw new CardioDataException("trainerId is not defined");
+            }
+            tokenMan.assertToken(userId, token);
+            ugMan.acceptToTrainer(userId, trainerId);
+            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
+    @POST
+    @Produces("application/json")
+    @Path("rejectToTrainer")
+    public Response rejectToTrainer(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("trainerId") Long trainerId) {
+        try {
+            if (userId == null) {
+                throw new CardioDataException("userId is not defined");
+            }
+            if (trainerId == null) {
+                throw new CardioDataException("trainerId is not defined");
+            }
+            tokenMan.assertToken(userId, token);
+            ugMan.rejectToTrainer(userId, trainerId);
+            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
