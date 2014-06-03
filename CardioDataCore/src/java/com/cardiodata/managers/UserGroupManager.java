@@ -312,7 +312,7 @@ public class UserGroupManager implements UserGroupManagerLocal {
         if (userId == null){
             throw new CardioDataException("getUserTrainers: userIs is not specified");
         }
-        List<User> list = em.createQuery("select u from User u, UserGroupBinding ub, UserGroup ug where ug.id=ub.groupId and ub.userId=u.id and u.id=:userId and ug.groupType=:gType ")
+        List<User> list = em.createQuery("select t from User t, User u, UserGroupBinding ub, UserGroup ug where ug.id=ub.groupId and ub.userId=u.id and u.id=:userId and ug.groupType=:gType and ug.ownerId=t.id")
                 .setParameter("userId", userId)
                 .setParameter("gType", UserGroupTypeEnum.DEFAULT)
                 .getResultList();
