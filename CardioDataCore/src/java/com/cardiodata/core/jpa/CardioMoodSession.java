@@ -21,6 +21,7 @@ public class CardioMoodSession implements Serializable {
     protected Long serverId;
     protected Long userId;
     protected Long creationTimestamp;
+    protected Long endTimestamp;
     protected String dataClassName;
     protected Long lastModificationTimestamp;
     protected Long originalSessionId;
@@ -110,6 +111,17 @@ public class CardioMoodSession implements Serializable {
     public void setOriginalSessionId(Long originSessionId) {
         this.originalSessionId = originSessionId;
     }
+
+    public Long getEndTimestamp() {
+        return endTimestamp;
+    }
+
+    public void setEndTimestamp(Long endTimestamp) {
+        this.endTimestamp = endTimestamp;
+    }
+    
+    
+    
 
     @Override
     public int hashCode() {

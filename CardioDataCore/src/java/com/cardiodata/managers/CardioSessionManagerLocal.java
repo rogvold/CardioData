@@ -39,4 +39,6 @@ public interface CardioSessionManagerLocal {
     
     public void deleteCardioSession(Long sessionId) throws CardioDataException;
     
+    public void finishCardioSession(Long sessionId, Long endTimestamp) throws CardioDataException;
+    
 }

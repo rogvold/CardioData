@@ -157,7 +157,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
 
     @Override
-    public void rewriteCardioSessionData(String jsonIncomingData) throws CardioDataException {//todo
+    public void rewriteCardioSessionData(String jsonIncomingData) throws CardioDataException {
         CardioSessionWithData cw = (new Gson()).fromJson(jsonIncomingData, CardioSessionWithData.class);
         Long sessionId = cw.getId();
         System.out.println("rewriteCardioSessionData: sessionId = " + sessionId + "");
@@ -188,6 +188,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         session.setCreationTimestamp(cw.getCreationTimestamp());
         session.setLastModificationTimestamp(cw.getLastModificationTimestamp() == null ? (new Date()).getTime() : cw.getLastModificationTimestamp());
         session.setOriginalSessionId(cw.getOriginalSessionId());
+        session.setEndTimestamp(cw.getEndTimestamp());
         em.merge(session);
         for (CardioDataItem cdi : dataItems) {
             CardioDataItem ci = new CardioDataItem(cdi.getDataItem(), sessionId, cdi.getNumber(), cdi.getCreationTimestamp());
@@ -274,5 +275,24 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
             throw new CardioDataException("cardio session with id = " + sessionId + " is not found in the system");
         }
         em.remove(c);
+    }
+
+    @Override
+    public void finishCardioSession(Long sessionId, Long endTimestamp) throws CardioDataException {
+        if (sessionId == null){
+            throw new CardioDataException("sessionId is null");
+        }
+        if (endTimestamp == null){
+            throw new CardioDataException("endTimestamp is null");
+        }
+        CardioMoodSession cs = getCardioSessionById(sessionId);
+        if (cs == null){
+            throw new CardioDataException("session with id=" + sessionId + " is not found"  );
+        }
+        if (cs.getCreationTimestamp() > endTimestamp){
+            throw new CardioDataException("finishCardioSession: endTimestamp is more than creationTimestamp");
+        }
+        cs.setEndTimestamp(endTimestamp);
+        em.merge(cs);
     }
 }

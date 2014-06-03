@@ -117,6 +117,30 @@ public class CardioMoodSessionResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
+    
+    @POST
+    @Produces("application/json")
+    @Path("finishCardioMoodSession")
+    public Response finishCardioMoodSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId, @FormParam("endTimestamp") Long endTimestamp) {
+        try {
+            tokenMan.assertToken(userId, token);
+            if (sessionId == null){
+                throw new CardioDataException("sessionId is not specified");
+            }
+            CardioMoodSession cs = cardMan.getCardioSessionById(sessionId);
+            if (cs == null){
+                throw new CardioDataException("session with id=" + sessionId + " is not found");
+            }
+            if (sessionId.equals(cs.getUserId()) == false){
+                throw new CardioDataException("access denied", ResponseConstants.ACCESS_DENIED_CODE);
+            }
+            cardMan.finishCardioSession(sessionId, endTimestamp);
+            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
 
     @POST
     @Produces("application/json")
