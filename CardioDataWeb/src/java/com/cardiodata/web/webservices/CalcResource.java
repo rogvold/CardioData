@@ -2,9 +2,13 @@ package com.cardiodata.web.webservices;
 
 import com.cardiodata.additional.CalcInputData;
 import com.cardiodata.additional.CalcManager;
+import com.cardiodata.core.jpa.CardioMoodSession;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.*;
+import com.cardiodata.managers.CardioSessionManagerLocal;
 import com.google.gson.Gson;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
@@ -17,10 +21,17 @@ import javax.ws.rs.core.UriInfo;
  * @author rogvold
  */
 @Path("calc")
+@Stateless
 public class CalcResource {
 
     @Context
     private UriInfo context;
+    
+    @EJB
+    CardioSessionManagerLocal csMan;
+    
+    @EJB
+    TokenManagerLocal tokenMan;
 
     /**
      * Creates a new instance of CalcResource
@@ -111,6 +122,22 @@ public class CalcResource {
         }
     }
 
+    @POST
+    @Produces("application/json")
+    @Path("getLastSDNN")
+    public Response getLastSDNN(@FormParam("token") String token, @FormParam("trainerId") Long trainerId, @FormParam("userId") Long userId) {
+        try {
+            tokenMan.assertToken(trainerId, token);
+            
+            Long sessionId = csMan.getTheMostFreshCardioMoodSessionIdOfUser(userId);
+
+            JsonResponse<double[][]> jr = new JsonResponse<double[][]>(ResponseConstants.OK, res);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
     /**
      * PUT method for updating or creating an instance of CalcResource
      *

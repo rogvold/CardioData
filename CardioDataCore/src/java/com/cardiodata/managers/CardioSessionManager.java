@@ -295,4 +295,23 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         cs.setEndTimestamp(endTimestamp);
         em.merge(cs);
     }
+
+    @Override
+    public Long getTheMostFreshCardioMoodSessionIdOfUser(Long userId) throws CardioDataException {
+        if (userId == null){
+            throw new CardioDataException("userId is null");
+        }
+        List<Long> list = em.createQuery("select cs.id from CardioMoodSession cs, User u, CardioDataItem i "
+                + "where "
+                + "u.id=:userId "
+                + "and "
+                + "i.creationTimestamp = "
+                + "(select max(item.creationtimestamp) from cardiodataitem item where item.sessionId=cs.id)  ")
+                .setParameter("userId", userId)
+                .getResultList();
+        if (list == null || list.isEmpty()){
+            return null;
+        }
+        return list.get(0);
+    }
 }

@@ -1,11 +1,16 @@
 package com.cardiodata.additional;
 
+import com.cardiodata.core.jpa.CardioDataItem;
+import com.cardiodata.json.entity.JsonRRInterval;
 import com.cardiomood.math.HeartRateUtils;
 import com.cardiomood.math.filter.ArtifactFilter;
 import com.cardiomood.math.filter.SimpleInterpolationArtifactFilter;
 import com.cardiomood.math.spectrum.FFT;
 import com.cardiomood.math.spectrum.SpectralAnalysis;
 import com.cardiomood.math.window.DataWindow;
+import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -71,4 +76,21 @@ public class CalcManager {
         double[][] res = HeartRateUtils.getSDNN(intervals, time, SIGMA_WINDOW_SIZE_INT, SIGMA_STEP_SIZE_INT);
         return res;
     }
+    
+    public static Double getLastSDNN(List<CardioDataItem> items){
+        if (items == null){
+            return null;
+        }
+        double[] arr = new double[items.size()];
+        arr = filter.doFilter(arr);
+        Gson gson = new Gson();
+        for (int i = 0; i < items.size(); i++){
+            String data = items.get(i).getDataItem();
+            Integer r = gson.fromJson(data, JsonRRInterval.class).getR();
+            arr[i] = 1.0 * r;
+        }
+        double v = HeartRateUtils.getSDNN(arr, arr.length - SIGMA_WINDOW_SIZE_INT, arr.length);
+        return v;
+    }
+    
 }
