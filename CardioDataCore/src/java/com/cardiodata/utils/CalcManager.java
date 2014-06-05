@@ -93,7 +93,7 @@ public class CalcManager {
             Integer r = gson.fromJson(data, JsonRRInterval.class).getR();
             arr[i] = 1.0 * r;
         }
-        double v = HeartRateUtils.getSDNN(arr, arr.length - SIGMA_WINDOW_SIZE_INT, arr.length);
+        double v = HeartRateUtils.getSDNN(arr, arr.length - SIGMA_WINDOW_SIZE_INT, SIGMA_WINDOW_SIZE_INT);
         return v;
     }
     
