@@ -130,8 +130,9 @@ public class CalcResource {
     public Response getTraineesFreshParameters(@FormParam("token") String token, @FormParam("trainerId") Long trainerId) {
         try {
             tokenMan.assertToken(trainerId, token);
-            List<DashboardUser> list = csMan.getDashboardUsersOfTrainer(trainerId);
-            JsonResponse<List<DashboardUser>> jr = new JsonResponse<List<DashboardUser>>(ResponseConstants.OK, list);
+            //List<DashboardUser> list = csMan.getDashboardUsersOfTrainer(trainerId);
+            //JsonResponse<List<DashboardUser>> jr = new JsonResponse<List<DashboardUser>>(ResponseConstants.OK, list);
+            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
