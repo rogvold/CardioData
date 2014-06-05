@@ -323,14 +323,6 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         List<Long> list = em.createQuery("select item.sessionId from CardioDataItem item where item.creationTimestamp=:stamp")
                 .setParameter("stamp", tStamp)
                 .getResultList();
-//        List<Long> list = em.createQuery("select cs.id from CardioMoodSession cs, User u, CardioDataItem i "
-//                + "where "
-//                + "u.id=:userId "
-//                + "and "
-//                + "i.creationTimestamp = "
-//                + "(select max(item.creationTimestamp) from CardioDataItem item where item.sessionId=cs.id)  ")
-//                .setParameter("userId", userId)
-//                .getResultList();
         if (list == null || list.isEmpty()){
             return null;
         }
@@ -351,12 +343,15 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
             Long sessionId = getTheMostFreshCardioMoodSessionIdOfUser(u.getId());
             CardioSessionWithData d = getCardioSessionWihData(sessionId);
             List<CardioDataItem> items = d.getDataItems();
+            double[] arr = CalcManager.getArrayFromRRCardioDataItemList(items);
+            
+            
             Double bpm = null;
             Double lastSDNN = null;
             if (!items.isEmpty()){
-                bpm = Math.floor(60000.0 / ( (new Gson()).fromJson(items.get(items.size() - 1).getDataItem(), JsonRRInterval.class)  ).getR());
+                bpm = CalcManager.getLastFilteredBPM(arr);
+                lastSDNN = CalcManager.getLastSDNN(arr);
             }
-            lastSDNN = CalcManager.getLastSDNN(d.getDataItems());
             DashboardUser du = new DashboardUser();
             du.setBpm(bpm);
             du.setSDNN(lastSDNN);

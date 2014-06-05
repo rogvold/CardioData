@@ -11,6 +11,7 @@ import com.cardiomood.math.spectrum.SpectralAnalysis;
 import com.cardiomood.math.window.DataWindow;
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -78,22 +79,40 @@ public class CalcManager {
         return res;
     }
     
-    public static Double getLastSDNN(List<CardioDataItem> items){
-        if (items == null){
-            return null;
+    public static double[] getArrayFromRRCardioDataItemList(List<CardioDataItem> items){
+        if (items == null || items.size() == 0){
+            return new double[0];
         }
         double[] arr = new double[items.size()];
-        arr = filter.doFilter(arr);
-        if (arr.length < SIGMA_WINDOW_SIZE_INT){
-            return null;
-        }
         Gson gson = new Gson();
         for (int i = 0; i < items.size(); i++){
             String data = items.get(i).getDataItem();
             Integer r = gson.fromJson(data, JsonRRInterval.class).getR();
             arr[i] = 1.0 * r;
         }
+        return arr;
+    }
+    
+    public static Double getLastSDNN(double[] arr){
+        arr = filter.doFilter(arr);
+        if (arr.length < SIGMA_WINDOW_SIZE_INT){
+            return null;
+        }
         double v = HeartRateUtils.getSDNN(arr, arr.length - SIGMA_WINDOW_SIZE_INT, SIGMA_WINDOW_SIZE_INT);
+        return v;
+    }
+    
+    public static Double getLastFilteredBPM(double[] arr){
+        if (arr.length < 5){
+            return null;
+        }
+        double[] arr2 = new double[5];
+        for(int i = arr.length - 5, k = 0; i < arr.length; i++, k++){
+            arr2[k] = arr[i];
+        }
+        
+        arr2 = filter.doFilter(arr2);
+        double v = Math.floor(600000.0/arr2[arr2.length - 1]) / 10.0;
         return v;
     }
     
