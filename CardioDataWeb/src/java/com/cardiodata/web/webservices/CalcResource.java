@@ -151,6 +151,19 @@ public class CalcResource {
         }
     }
     
+    @POST
+    @Produces("application/json")
+    @Path("test2")
+    public Response test2Calc(@FormParam("token") String token, @FormParam("trainerId") Long trainerId) {
+        try {
+            tokenMan.assertToken(trainerId, token);
+            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
     /**
      * PUT method for updating or creating an instance of CalcResource
      *
