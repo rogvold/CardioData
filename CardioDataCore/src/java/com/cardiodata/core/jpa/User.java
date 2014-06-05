@@ -33,6 +33,8 @@ public class User implements Serializable {
     
     protected Double weight;
     protected Double height;
+    
+    
 
     public AccountStatusEnum getAccountStatus() {
         return accountStatus;

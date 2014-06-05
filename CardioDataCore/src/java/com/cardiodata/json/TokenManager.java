@@ -1,14 +1,19 @@
 package com.cardiodata.json;
 
 import com.cardiodata.core.jpa.ApiToken;
+import com.cardiodata.core.jpa.User;
+import com.cardiodata.enums.UserRoleEnum;
 import com.cardiodata.exceptions.CardioDataException;
+import com.cardiodata.managers.UserGroupManagerLocal;
+import com.cardiodata.managers.UserManagerLocal;
+import com.cardiodata.utils.StringUtils;
+import java.util.Date;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import com.cardiodata.utils.StringUtils;
-import java.util.Date;
 
 /**
  *
@@ -19,6 +24,12 @@ public class TokenManager implements TokenManagerLocal {
 
     @PersistenceContext(unitName = "CardioDataCorePU")
     EntityManager em;
+    
+    @EJB
+    UserManagerLocal userMan;
+    
+    @EJB
+    UserGroupManagerLocal ugMan;
 
     private ApiToken refreshUserToken(Long userId) throws CardioDataException {
         ApiToken token = getTokenByUserId(userId);
@@ -107,5 +118,26 @@ public class TokenManager implements TokenManagerLocal {
         if (!tokenString.equals(token.getToken())) {
             throw new CardioDataException("token is not valid");
         }
+    }
+
+    @Override
+    public boolean hasRights(Long userId, String token) throws CardioDataException {
+        if (userId == null){
+            throw new CardioDataException("userId is null");
+        }
+        if (token == null || "".equals(token)){
+            throw new CardioDataException("token is not specified");
+        }
+        User tUser = userMan.getUserByToken(token);
+        if (tUser == null){
+            throw new CardioDataException("user with specified token is not found", ResponseConstants.INVALID_TOKEN_CODE);
+        }
+        if (tUser.getId().equals(userId)){
+            return true;
+        }
+        if (tUser.getUserRole().equals(UserRoleEnum.TRAINER)){
+            return ugMan.areConnected(tUser.getId(), userId);
+        }
+        return false;
     }
 }

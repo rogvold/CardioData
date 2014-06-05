@@ -6,6 +6,7 @@ import com.cardiodata.core.jpa.User;
 import com.cardiodata.core.jpa.UserAccount;
 import com.cardiodata.core.jpa.UserGroup;
 import com.cardiodata.exceptions.CardioDataException;
+import com.cardiodata.json.CalculatedRRSession;
 import com.cardiodata.json.CardioSessionWithData;
 import com.cardiodata.json.DashboardUser;
 import com.cardiodata.json.ResponseConstants;
@@ -368,4 +369,33 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         }
         return list;
     }
+
+    @Override
+    public CalculatedRRSession getCalculatedRRSession(Long sessionId, boolean useFilter) throws CardioDataException {
+        if (sessionId == null){
+            throw new CardioDataException("getCalculatedSession: sessionId is null");
+        }
+        CardioMoodSession cs = getCardioSessionById(sessionId);
+        if (cs == null){
+            throw new CardioDataException("session with id=" + sessionId + " is not found");
+        }
+        CardioSessionWithData d = getCardioSessionWihData(sessionId);
+        List<CardioDataItem> items = d.getDataItems();
+        double[][] arr = CalcManager.get2DArrayFromRRCardioDataItemList(items);
+        if (useFilter == true){
+            arr = CalcManager.filter2DRRArray(arr);
+        }
+        Map<String, double[][]> map = new HashMap();
+        map.put("RR", arr);
+        
+        double[][] arrSDNN = CalcManager.getSDNN(arr[1], arr[0], false);
+        map.put("SDNN", arrSDNN);
+        
+        double[][] arrTension = CalcManager.getTensionArray(arr[1], arr[0], false);
+        map.put("SI", arrTension);
+        
+        return new CalculatedRRSession(cs, map);
+    }
+    
+    
 }

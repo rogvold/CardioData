@@ -2,6 +2,7 @@ package com.cardiodata.managers;
 
 import com.cardiodata.core.jpa.CardioMoodSession;
 import com.cardiodata.exceptions.CardioDataException;
+import com.cardiodata.json.CalculatedRRSession;
 import com.cardiodata.json.CardioSessionWithData;
 import com.cardiodata.json.DashboardUser;
 import java.util.List;
@@ -45,5 +46,7 @@ public interface CardioSessionManagerLocal {
     public Long getTheMostFreshCardioMoodSessionIdOfUser(Long userId) throws CardioDataException;
     
     public List<DashboardUser> getDashboardUsersOfTrainer(Long trainerId) throws CardioDataException;
+    
+    public CalculatedRRSession getCalculatedRRSession(Long sessionId, boolean useFilter) throws CardioDataException;
     
 }

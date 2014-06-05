@@ -10,7 +10,6 @@ import com.cardiomood.math.spectrum.FFT;
 import com.cardiomood.math.spectrum.SpectralAnalysis;
 import com.cardiomood.math.window.DataWindow;
 import com.google.gson.Gson;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -65,15 +64,19 @@ public class CalcManager {
         return res;
     }
 
-    public static double[][] getTensionArray(double[] intervals, double[] time) {
-        intervals = filter.doFilter(intervals);
+    public static double[][] getTensionArray(double[] intervals, double[] time, boolean useFilter) {
+        if (useFilter == true){
+            intervals = filter.doFilter(intervals);
+        }
         DataWindow window = new DataWindow.Timed(STRESS_WINDOW_SIZE, STRESS_STEP_SIZE);
         double[][] res = HeartRateUtils.getSI(intervals, time, STRESS_WINDOW_SIZE_INT, STRESS_STEP_SIZE_INT);
         return res;
     }
 
-    public static double[][] getSDNN(double[] intervals, double[] time) {
-        intervals = filter.doFilter(intervals);
+    public static double[][] getSDNN(double[] intervals, double[] time, boolean useFilter) {
+        if (useFilter == true){
+            intervals = filter.doFilter(intervals);
+        }
         DataWindow window = new DataWindow.IntervalsCount(SIGMA_WINDOW_SIZE, SIGMA_STEP_SIZE);
         double[][] res = HeartRateUtils.getSDNN(intervals, time, SIGMA_WINDOW_SIZE_INT, SIGMA_STEP_SIZE_INT);
         return res;
@@ -92,6 +95,29 @@ public class CalcManager {
         }
         return arr;
     }
+    
+    public static double[][] get2DArrayFromRRCardioDataItemList(List<CardioDataItem> items){
+        if (items == null || items.size() == 0){
+            return new double[0][];
+        }
+        double[][] arr = new double[2][items.size()];
+        Gson gson = new Gson();
+        for (int i = 0; i < items.size(); i++){
+            String data = items.get(i).getDataItem();
+            Integer r = gson.fromJson(data, JsonRRInterval.class).getR();
+            arr[0][i] = items.get(i).getCreationTimestamp();
+            arr[1][i] = 1.0 * r;
+        }
+        return arr;
+    }
+    
+    public static double[][] filter2DRRArray(double[][] arr){
+        arr[1] = filter.doFilter(arr[1]);
+        arr[0] = Arrays.copyOf(arr[0], arr[0].length);
+        return arr;
+    }
+    
+    
     
     public static Double getLastSDNN(double[] arr){
         arr = filter.doFilter(arr);

@@ -399,5 +399,22 @@ public class UserGroupManager implements UserGroupManagerLocal {
         acceptRequestToGroup(r.getId());
     }
 
+    @Override
+    public boolean areConnected(Long trainerId, Long userId) throws CardioDataException {
+        if (trainerId == null){
+            throw new CardioDataException("areConnected: trainerId is not specified");
+        }
+        if (userId == null){
+            throw new CardioDataException("areConnected: userId is not specified");
+        }
+        UserGroup g = userMan.getTrainerDefaultGroup(trainerId);
+        List<User> list = em.createQuery("select u from User u, UserGroupBinding b where u.id=:userId and u.id=b.userId and b.groupId=:groupId")
+                .setParameter("userId", userId).setParameter("groupId", g.getId()).getResultList();
+        if (list == null || list.isEmpty()){
+            return false;
+        }
+        return true;
+    }
+
     
 }

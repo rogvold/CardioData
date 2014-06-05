@@ -22,4 +22,6 @@ public interface TokenManagerLocal {
     
     public boolean isExpiredApiToken(Long tokenId) throws CardioDataException;
     
+    public boolean hasRights(Long userId, String token) throws CardioDataException;
+    
 }

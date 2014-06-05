@@ -85,7 +85,7 @@ public class CalcResource {
             if (time == null) {
                 res = CalcManager.getTensionArray(d.getSeries());
             } else {
-                res = CalcManager.getTensionArray(rrs, time);
+                res = CalcManager.getTensionArray(rrs, time, true);
             }
 
             JsonResponse<double[][]> jr = new JsonResponse<double[][]>(ResponseConstants.OK, res);
@@ -113,7 +113,7 @@ public class CalcResource {
             if (time == null) {
                 res = CalcManager.getSDNN(d.getSeries());
             } else {
-                res = CalcManager.getSDNN(rrs, time);
+                res = CalcManager.getSDNN(rrs, time, true);
             }
 
             JsonResponse<double[][]> jr = new JsonResponse<double[][]>(ResponseConstants.OK, res);
@@ -134,6 +134,23 @@ public class CalcResource {
             }
             Long sessionId = csMan.getTheMostFreshCardioMoodSessionIdOfUser(userId);
             JsonResponse<Long> jr = new JsonResponse<Long>(ResponseConstants.OK, sessionId);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
+           
+    @POST
+    @Produces("application/json")
+    @Path("getCalculatedSession")
+    public Response getCalculatedSession(@FormParam("sessionId") Long sessionId) {
+        try {
+            if (sessionId == null){
+                throw new CardioDataException("sessionId is null");
+            }
+            CalculatedRRSession rSession = csMan.getCalculatedRRSession(sessionId, true);
+            JsonResponse<CalculatedRRSession> jr = new JsonResponse<CalculatedRRSession>(ResponseConstants.OK, rSession);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
