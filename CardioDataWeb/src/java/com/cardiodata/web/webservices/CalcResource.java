@@ -123,11 +123,11 @@ public class CalcResource {
         }
     }
 
-
+    
     @POST
     @Produces("application/json")
-    @Path("getDashboardUsersParameters")
-    public Response getDashboardUsersParameters(@FormParam("token") String token, @FormParam("trainerId") Long trainerId) {
+    @Path("traineesFreshParameters")
+    public Response getTraineesFreshParameters(@FormParam("token") String token, @FormParam("trainerId") Long trainerId) {
         try {
             tokenMan.assertToken(trainerId, token);
             List<DashboardUser> list = csMan.getDashboardUsersOfTrainer(trainerId);
