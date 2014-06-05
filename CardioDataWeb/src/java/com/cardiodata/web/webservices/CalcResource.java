@@ -123,7 +123,22 @@ public class CalcResource {
         }
     }
 
-   
+       
+    @POST
+    @Produces("application/json")
+    @Path("freshSessionId")
+    public Response getFreshSessionId(@FormParam("userId") Long userId) {
+        try {
+            if (userId == null){
+                throw new CardioDataException("userId is null");
+            }
+            Long sessionId = csMan.getTheMostFreshCardioMoodSessionIdOfUser(userId);
+            JsonResponse<Long> jr = new JsonResponse<Long>(ResponseConstants.OK, sessionId);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
     
     @POST
     @Produces("application/json")
