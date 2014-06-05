@@ -354,7 +354,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
             Double bpm = null;
             Double lastSDNN = null;
             if (!items.isEmpty()){
-                bpm = Math.floor(1.0 / ( (new Gson()).fromJson(items.get(items.size() - 1).getDataItem(), JsonRRInterval.class)  ).getR());
+                bpm = Math.floor(60000.0 / ( (new Gson()).fromJson(items.get(items.size() - 1).getDataItem(), JsonRRInterval.class)  ).getR());
             }
             lastSDNN = CalcManager.getLastSDNN(d.getDataItems());
             DashboardUser du = new DashboardUser();
