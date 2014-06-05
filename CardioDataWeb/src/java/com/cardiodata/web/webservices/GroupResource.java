@@ -4,10 +4,12 @@ import com.cardiodata.core.jpa.User;
 import com.cardiodata.core.jpa.UserGroup;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.CardioDataExceptionWrapper;
+import com.cardiodata.json.DashboardUser;
 import com.cardiodata.json.JsonResponse;
 import com.cardiodata.json.ResponseConstants;
 import com.cardiodata.json.SimpleResponseWrapper;
 import com.cardiodata.json.TokenManagerLocal;
+import com.cardiodata.managers.CardioSessionManagerLocal;
 import com.cardiodata.managers.ClientServerManagerLocal;
 import com.cardiodata.managers.UserGroupManagerLocal;
 import com.cardiodata.managers.UserManagerLocal;
@@ -42,6 +44,8 @@ public class GroupResource {
     TokenManagerLocal tokenMan;
     @EJB
     UserGroupManagerLocal ugMan;
+    @EJB
+    CardioSessionManagerLocal cardMan;
     
     /**
      * Creates a new instance of GroupResource
@@ -268,5 +272,21 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
+    
+        
+    @POST
+    @Produces("application/json")
+    @Path("traineesFreshParameters")
+    public Response getTraineesFreshParameters(@FormParam("token") String token, @FormParam("trainerId") Long trainerId) {
+        try {
+            tokenMan.assertToken(trainerId, token);
+            List<DashboardUser> list = cardMan.getDashboardUsersOfTrainer(trainerId);
+            JsonResponse<List<DashboardUser>> jr = new JsonResponse<List<DashboardUser>>(ResponseConstants.OK, list);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
     
 }
