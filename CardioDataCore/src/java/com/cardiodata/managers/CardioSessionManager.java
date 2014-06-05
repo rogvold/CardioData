@@ -319,7 +319,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
                 + "u.id=:userId "
                 + "and "
                 + "i.creationTimestamp = "
-                + "(select max(item.creationtimestamp) from cardiodataitem item where item.sessionId=cs.id)  ")
+                + "(select max(item.creationTimestamp) from CardioDataItem item where item.sessionId=cs.id)  ")
                 .setParameter("userId", userId)
                 .getResultList();
         if (list == null || list.isEmpty()){

@@ -46,7 +46,7 @@ public class GroupResource {
     UserGroupManagerLocal ugMan;
     @EJB
     CardioSessionManagerLocal cardMan;
-    
+
     /**
      * Creates a new instance of GroupResource
      */
@@ -61,7 +61,7 @@ public class GroupResource {
             if (trainerId == null) {
                 throw new CardioDataException("trainerId is not defined");
             }
-            if (groupId == null){
+            if (groupId == null) {
                 throw new CardioDataException("groupId is not defined");
             }
             tokenMan.assertToken(trainerId, token);
@@ -72,8 +72,7 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
-    
+
     @POST
     @Produces("application/json")
     @Path("getMyTrainers")
@@ -89,8 +88,8 @@ public class GroupResource {
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
-    }   
-    
+    }
+
     @POST
     @Produces("application/json")
     @Path("inviteTrainee")
@@ -107,8 +106,7 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
-        
+
     @POST
     @Produces("application/json")
     @Path("inviteTraineeByEmail")
@@ -125,8 +123,7 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
-        
+
     @POST
     @Produces("application/json")
     @Path("acceptInvitation")
@@ -135,7 +132,7 @@ public class GroupResource {
             if (userId == null) {
                 throw new CardioDataException("userId is not defined");
             }
-            if (requestId == null){
+            if (requestId == null) {
                 throw new CardioDataException("requestId is not specified");
             }
             tokenMan.assertToken(userId, token);
@@ -146,7 +143,7 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
+
     @POST
     @Produces("application/json")
     @Path("removeTraineeInvitation")
@@ -163,7 +160,7 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
+
     @POST
     @Produces("application/json")
     @Path("removeTraineeFromDashboard")
@@ -172,7 +169,7 @@ public class GroupResource {
             if (trainerId == null) {
                 throw new CardioDataException("trainerId is not defined");
             }
-            if (traineeId == null){
+            if (traineeId == null) {
                 throw new CardioDataException("traineeId is not specified");
             }
             tokenMan.assertToken(trainerId, trainerToken);
@@ -184,8 +181,7 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
-    
+
     @POST
     @Produces("application/json")
     @Path("getDashboardTrainees")
@@ -200,7 +196,7 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
+
     @POST
     @Produces("application/json")
     @Path("getInvitedTrainees")
@@ -214,7 +210,7 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
+
     @POST
     @Produces("application/json")
     @Path("getUserInvitorsTrainers")
@@ -231,8 +227,7 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
-        
+
     @POST
     @Produces("application/json")
     @Path("acceptToTrainer")
@@ -252,7 +247,7 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
+
     @POST
     @Produces("application/json")
     @Path("rejectToTrainer")
@@ -272,8 +267,7 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
-        
+
     @POST
     @Produces("application/json")
     @Path("traineesFreshParameters")
@@ -287,6 +281,5 @@ public class GroupResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
-    
-    
+
 }
