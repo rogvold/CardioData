@@ -125,11 +125,24 @@ public class CalcResource {
     @POST
     @Produces("application/json")
     @Path("getDashboardUsersParameters")
-    public Response getCardioMoodSessionData(@FormParam("token") String token, @FormParam("trainerId") Long trainerId) {
+    public Response getDashboardUsersParameters(@FormParam("token") String token, @FormParam("trainerId") Long trainerId) {
         try {
             tokenMan.assertToken(trainerId, token);
             List<DashboardUser> list = csMan.getDashboardUsersOfTrainer(trainerId);
             JsonResponse<List<DashboardUser>> jr = new JsonResponse<List<DashboardUser>>(ResponseConstants.OK, list);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
+    @POST
+    @Produces("application/json")
+    @Path("test")
+    public Response testCalc(@FormParam("token") String token, @FormParam("trainerId") Long trainerId) {
+        try {
+            tokenMan.assertToken(trainerId, token);
+            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
