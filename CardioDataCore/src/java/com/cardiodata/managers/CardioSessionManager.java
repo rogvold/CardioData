@@ -314,14 +314,23 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         if (userId == null){
             throw new CardioDataException("userId is null");
         }
-        List<Long> list = em.createQuery("select cs.id from CardioMoodSession cs, User u, CardioDataItem i "
-                + "where "
-                + "u.id=:userId "
-                + "and "
-                + "i.creationTimestamp = "
-                + "(select max(item.creationTimestamp) from CardioDataItem item where item.sessionId=cs.id)  ")
-                .setParameter("userId", userId)
+        List<Long> fList = em.createQuery("select max(item.creationTimestamp) from CardioDataItem item, CardioMoodSession cs where cs.userId=:userId and item.sessionId=cs.id")
+                .setParameter("userId", userId).setMaxResults(0).getResultList();
+        if (fList == null || fList.isEmpty()){
+            return null;
+        }
+        Long tStamp = fList.get(0);
+        List<Long> list = em.createQuery("select item.sessionId from CardioDataItem item where item.creationTimestamp=:stamp")
+                .setParameter("stamp", tStamp)
                 .getResultList();
+//        List<Long> list = em.createQuery("select cs.id from CardioMoodSession cs, User u, CardioDataItem i "
+//                + "where "
+//                + "u.id=:userId "
+//                + "and "
+//                + "i.creationTimestamp = "
+//                + "(select max(item.creationTimestamp) from CardioDataItem item where item.sessionId=cs.id)  ")
+//                .setParameter("userId", userId)
+//                .getResultList();
         if (list == null || list.isEmpty()){
             return null;
         }
