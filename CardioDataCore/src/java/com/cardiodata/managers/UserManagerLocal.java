@@ -2,6 +2,7 @@ package com.cardiodata.managers;
 
 import com.cardiodata.core.jpa.ApiToken;
 import com.cardiodata.core.jpa.User;
+import com.cardiodata.core.jpa.UserAccount;
 import com.cardiodata.core.jpa.UserGroup;
 import com.cardiodata.enums.AccountTypeEnum;
 import com.cardiodata.exceptions.CardioDataException;
@@ -20,6 +21,8 @@ public interface UserManagerLocal {
     public User loginUserByEmail(String email, String password) throws CardioDataException;
     
     public User getUserByEmail(String email) throws CardioDataException;
+    
+    public UserAccount getUserAccountByUserId(Long userId) throws CardioDataException;
 
     public User registerUser(AccountTypeEnum aType, String login, String password) throws CardioDataException;
     

@@ -3,6 +3,7 @@ package com.cardiodata.managers;
 import com.cardiodata.core.jpa.CardioDataItem;
 import com.cardiodata.core.jpa.CardioMoodSession;
 import com.cardiodata.core.jpa.User;
+import com.cardiodata.core.jpa.UserAccount;
 import com.cardiodata.core.jpa.UserGroup;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.CardioSessionWithData;
@@ -356,7 +357,12 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
             du.setBpm(bpm);
             du.setSDNN(lastSDNN);
             du.setId(u.getId());
-            du.setFirstName(u.getFirstName());
+            String firstName = u.getFirstName();
+            if ((firstName == null || "".equals(firstName)) && (u.getLastName() == null || "".equals(u.getLastName())) ){
+                UserAccount ac = userMan.getUserAccountByUserId(u.getId());
+                firstName = ac.getLogin();
+            }
+            du.setFirstName(firstName);
             du.setLastName(u.getLastName());
             list.add(du);
         }

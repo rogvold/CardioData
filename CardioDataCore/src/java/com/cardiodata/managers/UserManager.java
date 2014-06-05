@@ -323,4 +323,16 @@ public class UserManager implements UserManagerLocal {
         return list.get(0);
     }
 
+    @Override
+    public UserAccount getUserAccountByUserId(Long userId) throws CardioDataException {
+        if (userId == null){
+            throw new CardioDataException("userId is null");
+        }
+        List<UserAccount> list = em.createQuery("select ac from UserAccount ac where ac.userId=:userId").setParameter("userId", userId).setMaxResults(1).getResultList();
+        if (list == null || list.isEmpty()){
+            return null;
+        }
+        return list.get(0);
+    }
+
 }
