@@ -1,9 +1,10 @@
-package com.cardiodata.additional;
+package com.cardiodata.utils;
 
 import com.cardiodata.core.jpa.CardioDataItem;
 import com.cardiodata.json.entity.JsonRRInterval;
 import com.cardiomood.math.HeartRateUtils;
 import com.cardiomood.math.filter.ArtifactFilter;
+import com.cardiomood.math.filter.PisarukArtifactFilter;
 import com.cardiomood.math.filter.SimpleInterpolationArtifactFilter;
 import com.cardiomood.math.spectrum.FFT;
 import com.cardiomood.math.spectrum.SpectralAnalysis;
@@ -22,7 +23,7 @@ public class CalcManager {
     private static final double STRESS_STEP_SIZE = 5 * 1000;
     private static final double SIGMA_WINDOW_SIZE = 20;
     private static final double SIGMA_STEP_SIZE = 5;
-    private static final ArtifactFilter filter = new SimpleInterpolationArtifactFilter();
+    private static final ArtifactFilter filter = new PisarukArtifactFilter();
     private static final int STRESS_WINDOW_SIZE_INT = 120 * 1000;
     private static final int STRESS_STEP_SIZE_INT = 5 * 1000;
     private static final int SIGMA_WINDOW_SIZE_INT = 20;
@@ -83,6 +84,9 @@ public class CalcManager {
         }
         double[] arr = new double[items.size()];
         arr = filter.doFilter(arr);
+        if (arr.length < SIGMA_WINDOW_SIZE_INT){
+            return null;
+        }
         Gson gson = new Gson();
         for (int i = 0; i < items.size(); i++){
             String data = items.get(i).getDataItem();

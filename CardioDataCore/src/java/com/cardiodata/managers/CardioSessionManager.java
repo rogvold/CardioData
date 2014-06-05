@@ -2,12 +2,18 @@ package com.cardiodata.managers;
 
 import com.cardiodata.core.jpa.CardioDataItem;
 import com.cardiodata.core.jpa.CardioMoodSession;
+import com.cardiodata.core.jpa.User;
+import com.cardiodata.core.jpa.UserGroup;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.CardioSessionWithData;
+import com.cardiodata.json.DashboardUser;
 import com.cardiodata.json.ResponseConstants;
+import com.cardiodata.json.entity.JsonRRInterval;
+import com.cardiodata.utils.CalcManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.util.*;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,6 +28,13 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 
     @PersistenceContext(unitName = "CardioDataCorePU")
     EntityManager em;
+    
+    @EJB
+    UserGroupManagerLocal ugMan;
+    
+    @EJB
+    UserManagerLocal userMan;
+    
 
     @Override
     public CardioMoodSession createCardioSession(Long userId, Long serverId, String dataClassName) throws CardioDataException {
@@ -312,6 +325,37 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         if (list == null || list.isEmpty()){
             return null;
         }
-        return list.get(0);
+        Long sessionId = list.get(0);
+        System.out.println("getTheMostFreshCardioMoodSessionIdOfUser: the most fresh session of user (id=" + userId +") is session with id=" + sessionId);
+        return sessionId;
+    }
+
+    @Override
+    public List<DashboardUser> getDashboardUsersOfTrainer(Long trainerId) throws CardioDataException {
+        if (trainerId == null){
+            throw new CardioDataException("trainerId is null");
+        }
+        UserGroup g = userMan.getTrainerDefaultGroup(trainerId);
+        List<User> users = ugMan.getUsersInGroup(g.getId());
+        List<DashboardUser> list = new ArrayList();
+        for (User u : users){
+            Long sessionId = getTheMostFreshCardioMoodSessionIdOfUser(u.getId());
+            CardioSessionWithData d = getCardioSessionWihData(sessionId);
+            List<CardioDataItem> items = d.getDataItems();
+            Double bpm = null;
+            Double lastSDNN = null;
+            if (!items.isEmpty()){
+                bpm = Math.floor(1.0 / ( (new Gson()).fromJson(items.get(items.size() - 1).getDataItem(), JsonRRInterval.class)  ).getR());
+            }
+            lastSDNN = CalcManager.getLastSDNN(d.getDataItems());
+            DashboardUser du = new DashboardUser();
+            du.setBpm(bpm);
+            du.setSDNN(lastSDNN);
+            du.setId(u.getId());
+            du.setFirstName(u.getFirstName());
+            du.setLastName(u.getLastName());
+            list.add(du);
+        }
+        return list;
     }
 }

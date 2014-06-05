@@ -1,17 +1,16 @@
 package com.cardiodata.web.webservices;
 
 import com.cardiodata.additional.CalcInputData;
-import com.cardiodata.additional.CalcManager;
-import com.cardiodata.core.jpa.CardioMoodSession;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.*;
 import com.cardiodata.managers.CardioSessionManagerLocal;
+import com.cardiodata.utils.CalcManager;
 import com.google.gson.Gson;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -122,16 +121,15 @@ public class CalcResource {
         }
     }
 
+    
     @POST
     @Produces("application/json")
-    @Path("getLastSDNN")
-    public Response getLastSDNN(@FormParam("token") String token, @FormParam("trainerId") Long trainerId, @FormParam("userId") Long userId) {
+    @Path("getDashboardUsersParameters")
+    public Response getCardioMoodSessionData(@FormParam("token") String token, @FormParam("trainerId") Long trainerId) {
         try {
             tokenMan.assertToken(trainerId, token);
-            
-            Long sessionId = csMan.getTheMostFreshCardioMoodSessionIdOfUser(userId);
-
-            JsonResponse<double[][]> jr = new JsonResponse<double[][]>(ResponseConstants.OK, res);
+            List<DashboardUser> list = csMan.getDashboardUsersOfTrainer(trainerId);
+            JsonResponse<List<DashboardUser>> jr = new JsonResponse<List<DashboardUser>>(ResponseConstants.OK, list);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);

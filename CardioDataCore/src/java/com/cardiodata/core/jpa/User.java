@@ -16,23 +16,23 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    protected Long id;
     @Column(length = 500)
-    private String firstName;
+    protected String firstName;
     @Column(length = 500)
-    private String lastName;
+    protected String lastName;
     @Enumerated(EnumType.STRING)
-    private UserRoleEnum userRole;
+    protected UserRoleEnum userRole;
     @Enumerated(EnumType.STRING)
-    private AccountStatusEnum accountStatus;
+    protected AccountStatusEnum accountStatus;
     @Enumerated(EnumType.STRING)
-    private UserStatusEnum userStatus;
-    private Long registrationDate;
-    private Long lastLoginDate;
-    private Long lastModificationDate;
+    protected UserStatusEnum userStatus;
+    protected Long registrationDate;
+    protected Long lastLoginDate;
+    protected Long lastModificationDate;
     
-    private Double weight;
-    private Double height;
+    protected Double weight;
+    protected Double height;
 
     public AccountStatusEnum getAccountStatus() {
         return accountStatus;
