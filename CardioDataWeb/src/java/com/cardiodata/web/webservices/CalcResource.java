@@ -1,16 +1,18 @@
 package com.cardiodata.web.webservices;
 
 import com.cardiodata.additional.CalcInputData;
+import com.cardiodata.utils.CalcManager;
+import com.cardiodata.core.jpa.CardioMoodSession;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.*;
 import com.cardiodata.managers.CardioSessionManagerLocal;
-import com.cardiodata.utils.CalcManager;
 import com.google.gson.Gson;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -121,7 +123,7 @@ public class CalcResource {
         }
     }
 
-    
+
     @POST
     @Produces("application/json")
     @Path("getDashboardUsersParameters")

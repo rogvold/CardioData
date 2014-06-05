@@ -1,5 +1,3 @@
-
-
 package com.cardiodata.json;
 
 import com.cardiodata.core.jpa.User;
