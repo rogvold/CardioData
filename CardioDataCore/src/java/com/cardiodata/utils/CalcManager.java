@@ -69,6 +69,9 @@ public class CalcManager {
             intervals = filter.doFilter(intervals);
         }
         DataWindow window = new DataWindow.Timed(STRESS_WINDOW_SIZE, STRESS_STEP_SIZE);
+        
+        System.out.println("getTensionArray: intervals.length = " + intervals.length + " ; time.length = " + time.length);
+        
         double[][] res = HeartRateUtils.getSI(intervals, time, STRESS_WINDOW_SIZE_INT, STRESS_STEP_SIZE_INT);
         return res;
     }

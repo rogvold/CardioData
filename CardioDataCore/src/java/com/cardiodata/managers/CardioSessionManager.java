@@ -386,7 +386,10 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
             arr = CalcManager.filter2DRRArray(arr);
         }
         System.out.println("getCalculatedRRSession: arr = ");
+        
         System.out.println(arr);
+        System.out.println("arr.length = " + arr[0].length);
+        
         Map<String, double[][]> map = new HashMap();
         map.put("RR", arr);
         
