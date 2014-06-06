@@ -138,7 +138,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
             throw new CardioDataException("cardiosession with id=" + sessionId + " is not found");
         }
         List<CardioDataItem> list = getSessionCardioItems(sessionId);
-        CardioSessionWithData cw = new CardioSessionWithData(list, sessionId, cs.getName(), cs.getDescription(), cs.getServerId(), cs.getUserId(), cs.getCreationTimestamp(), cs.getDataClassName(), cs.getOriginalSessionId(), cs.getLastModificationTimestamp());
+        CardioSessionWithData cw = new CardioSessionWithData(list, sessionId, cs.getName(), cs.getDescription(), cs.getServerId(), cs.getUserId(), cs.getCreationTimestamp(), cs.getEndTimestamp(), cs.getDataClassName(), cs.getOriginalSessionId(), cs.getLastModificationTimestamp());
         return cw;
     }
 

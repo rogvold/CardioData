@@ -26,13 +26,14 @@ public class CardioMoodSession implements Serializable {
     protected Long lastModificationTimestamp;
     protected Long originalSessionId;
 
-    public CardioMoodSession(Long id, String name, String description, Long serverId, Long userId, Long creationTimestamp, String dataClassName, Long originalSessionId, Long lastModificationTimestamp) {
+    public CardioMoodSession(Long id, String name, String description, Long serverId, Long userId, Long creationTimestamp, Long endTimestamp, String dataClassName, Long originalSessionId, Long lastModificationTimestamp) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.serverId = serverId;
         this.userId = userId;
         this.creationTimestamp = creationTimestamp;
+        this.endTimestamp = endTimestamp;
         this.dataClassName = dataClassName;
         this.originalSessionId = originalSessionId;
     }

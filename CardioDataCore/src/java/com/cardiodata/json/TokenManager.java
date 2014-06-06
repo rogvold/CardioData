@@ -108,15 +108,18 @@ public class TokenManager implements TokenManagerLocal {
 
     @Override
     public void assertToken(Long userId, String tokenString) throws CardioDataException {
-        if (tokenString == null) {
-            throw new CardioDataException("token is not specified");
-        }
-        ApiToken token = getTokenByUserId(userId);
-        if (isExpiredApiToken(token.getId())) {
-            throw new CardioDataException("token is expired", ResponseConstants.INVALID_TOKEN_CODE);
-        }
-        if (!tokenString.equals(token.getToken())) {
-            throw new CardioDataException("token is not valid");
+//        if (tokenString == null) {
+//            throw new CardioDataException("token is not specified");
+//        }
+//        ApiToken token = getTokenByUserId(userId);
+//        if (isExpiredApiToken(token.getId())) {
+//            throw new CardioDataException("token is expired", ResponseConstants.INVALID_TOKEN_CODE);
+//        }
+//        if (!tokenString.equals(token.getToken())) {
+//            throw new CardioDataException("token is not valid");
+//        }
+        if (hasRights(userId, tokenString) == false){
+            throw new CardioDataException("access denied", ResponseConstants.ACCESS_DENIED_CODE);
         }
     }
 

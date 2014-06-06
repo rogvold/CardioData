@@ -46,14 +46,6 @@ public class TestResource {
         return CORSUtils.makeCORS(Response.ok(), requestH);
     }
 
-    @POST
-    @Produces("application/json")
-    @Path("/test2")
-    public Response test2() {
-        CardioMoodSession cs = new CardioMoodSession(Long.MIN_VALUE, "ololo", "llll", Long.MIN_VALUE, Long.MIN_VALUE, Long.MIN_VALUE, "ololo", Long.MAX_VALUE, Long.MAX_VALUE);
-        String s = (new Gson()).toJson(cs, CardioMoodSession.class);
-        return CORSUtils.makeCORS(Response.ok(s, MediaType.APPLICATION_JSON));
-    }
 //    @POST
 //    @Produces("application/json")
 //    @Path("/test2")
