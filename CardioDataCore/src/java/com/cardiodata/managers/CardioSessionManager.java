@@ -396,6 +396,12 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         double[][] arrSDNN = CalcManager.getSDNN(arr[1], arr[0], false);
         map.put("SDNN", arrSDNN);
         
+        System.out.println("arr sdnn");
+        for (int i = 0; i < arrSDNN[0].length; i++){
+            System.out.print("[" + arrSDNN[0][i] +"," + arrSDNN[1][i] +"] ");
+        }
+        System.out.println("");
+        
         double[][] arrTension = CalcManager.getTensionArray(arr[1], arr[0], false);
         map.put("SI", arrTension);
         

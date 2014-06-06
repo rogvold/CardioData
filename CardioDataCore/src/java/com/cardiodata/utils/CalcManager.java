@@ -74,8 +74,9 @@ public class CalcManager {
         
         System.out.println("printing intervals");
         for (int i = 0; i < intervals.length; i++){
-            System.out.println("[" + time[i] +"," + intervals[i] +"]");
+            System.out.print("[" + time[i] +"," + intervals[i] +"]");
         }
+        System.out.println(" ");
         
         double[][] res = HeartRateUtils.getSI(intervals, time, STRESS_WINDOW_SIZE_INT, STRESS_STEP_SIZE_INT);
         return res;
