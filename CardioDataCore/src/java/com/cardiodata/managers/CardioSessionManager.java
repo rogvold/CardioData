@@ -144,8 +144,8 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 
     @Override
     public void saveCardioSessionData(String jsonIncomingData) throws CardioDataException {
-        System.out.println("saveCardioSessionData occured");
-        System.out.println("jsonIncomingData = " + jsonIncomingData);
+        //System.out.println("saveCardioSessionData occured");
+        //System.out.println("jsonIncomingData = " + jsonIncomingData);
         CardioSessionWithData cw = (new Gson()).fromJson(jsonIncomingData, CardioSessionWithData.class);
         Long sessionId = cw.getId();
         if (sessionId == null) {
@@ -229,17 +229,17 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         for (CardioDataItem d : oldList) {
             stamps.add(d.getNumber());
         }
-        System.out.println("set = ");
-        System.out.println(stamps);
+        //System.out.println("set = ");
+        //System.out.println(stamps);
 
         for (CardioDataItem d : newList) {
             if (stamps.contains(d.getNumber())) {
-                System.out.println("skipping number " + d.getNumber());
+                //System.out.println("skipping number " + d.getNumber());
                 continue;
             } else {
                 stamps.add(d.getNumber());
                 l.add(d);
-                System.out.println("adding number " + d.getNumber());
+                //System.out.println("adding number " + d.getNumber());
             }
         }
         if (l.size() <= 1) {
