@@ -125,7 +125,7 @@ public class CardioSessionResource {
     public Response getCardioSessionData(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId) {
         try {
             tokenMan.assertToken(userId, token);
-            CardioSessionWithData cswd = cardMan.getCardioSessionWihData(sessionId);
+            CardioSessionWithData cswd = cardMan.getCardioSessionWihData(sessionId, null);
             JsonResponse<CardioSessionWithData> jr = new JsonResponse<CardioSessionWithData>(ResponseConstants.OK, cswd);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {

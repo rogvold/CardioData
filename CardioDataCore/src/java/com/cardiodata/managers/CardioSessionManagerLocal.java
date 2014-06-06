@@ -29,7 +29,7 @@ public interface CardioSessionManagerLocal {
     
     public void saveCardioSessionItems(Long sessionId, String jsonList) throws CardioDataException;
     
-    public CardioSessionWithData getCardioSessionWihData(Long sessionId) throws CardioDataException;
+    public CardioSessionWithData getCardioSessionWihData(Long sessionId, String className) throws CardioDataException;
     
     public void saveCardioSessionData(String jsonIncomingData) throws CardioDataException;
     

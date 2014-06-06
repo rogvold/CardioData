@@ -118,12 +118,17 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         }
     }
 
-    private List<CardioDataItem> getSessionCardioItems(Long sessionId) throws CardioDataException {
+    private List<CardioDataItem> getSessionCardioItems(Long sessionId, String className) throws CardioDataException {
         CardioMoodSession cs = getCardioSessionById(sessionId);
         if (cs == null) {
             throw new CardioDataException("cardiosession with id=" + sessionId + " is not found");
         }
         Query q = em.createQuery("select c from CardioDataItem c where c.sessionId=:sessionId order by c.number asc").setParameter("sessionId", sessionId);
+        if ((className != null) && ("".equals(className) == false)){
+            q = em.createQuery("select c from CardioDataItem c, CardioMoodSession cs where c.sessionId=:sessionId and c.sessionId=cs.id and  cs.dataClassName=:className order by c.number asc")
+                    .setParameter("className", className)
+                    .setParameter("sessionId", sessionId);
+        }
         List<CardioDataItem> list = q.getResultList();
         if (list == null) {
             list = Collections.emptyList();
@@ -132,12 +137,12 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
 
     @Override
-    public CardioSessionWithData getCardioSessionWihData(Long sessionId) throws CardioDataException {
+    public CardioSessionWithData getCardioSessionWihData(Long sessionId, String className) throws CardioDataException {
         CardioMoodSession cs = getCardioSessionById(sessionId);
         if (cs == null) {
             throw new CardioDataException("cardiosession with id=" + sessionId + " is not found");
         }
-        List<CardioDataItem> list = getSessionCardioItems(sessionId);
+        List<CardioDataItem> list = getSessionCardioItems(sessionId, className);
         CardioSessionWithData cw = new CardioSessionWithData(list, sessionId, cs.getName(), cs.getDescription(), cs.getServerId(), cs.getUserId(), cs.getCreationTimestamp(), cs.getEndTimestamp(), cs.getDataClassName(), cs.getOriginalSessionId(), cs.getLastModificationTimestamp());
         return cw;
     }
@@ -163,7 +168,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 //        }
 //        session.setDataClassName(cw.getDataClassName());
         em.merge(session);
-        List<CardioDataItem> oldList = getSessionCardioItems(sessionId);
+        List<CardioDataItem> oldList = getSessionCardioItems(sessionId, null);
         dataItems = getNewDataItems(oldList, dataItems);
         for (CardioDataItem cdi : dataItems) {
             CardioDataItem ci = new CardioDataItem(cdi.getDataItem(), sessionId, cdi.getNumber(), cdi.getCreationTimestamp());
@@ -343,7 +348,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         List<DashboardUser> list = new ArrayList();
         for (User u : users){
             Long sessionId = getTheMostFreshCardioMoodSessionIdOfUser(u.getId());
-            CardioSessionWithData d = getCardioSessionWihData(sessionId);
+            CardioSessionWithData d = getCardioSessionWihData(sessionId, JsonRRInterval.class.getSimpleName());
             List<CardioDataItem> items = d.getDataItems();
             double[] arr = CalcManager.getArrayFromRRCardioDataItemList(items);
             
@@ -379,7 +384,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         if (cs == null){
             throw new CardioDataException("session with id=" + sessionId + " is not found");
         }
-        CardioSessionWithData d = getCardioSessionWihData(sessionId);
+        CardioSessionWithData d = getCardioSessionWihData(sessionId, JsonRRInterval.class.getSimpleName());
         List<CardioDataItem> items = d.getDataItems();
         double[][] arr = CalcManager.get2DArrayFromRRCardioDataItemList(items);
         if (useFilter == true){
