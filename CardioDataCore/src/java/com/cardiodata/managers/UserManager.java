@@ -231,7 +231,7 @@ public class UserManager implements UserManagerLocal {
         if (updatedUser.getLastModificationDate() == null){
             throw new CardioDataException("last modification timestamp is not specified in serialized user");
         }
-        if (u.getLastLoginDate() > updatedUser.getLastModificationDate()){
+        if (u.getLastModificationDate()> updatedUser.getLastModificationDate()){
             throw new CardioDataException("Profile on server is more fresh then yours.", ResponseConstants.SYNCHRONIZATION_ERROR_CODE);
         }
         u.setFirstName(updatedUser.getFirstName());
