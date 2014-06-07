@@ -360,9 +360,6 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         double[] arr2 = Arrays.copyOfRange(arr, from, to);
         arr2 = CalcManager.pisarukFilter(arr2);
         for (int i = 0; i < arr2.length; i++){
-            if (arr2[i] > 220 || arr2[i] < 40){
-                continue;
-            }
             lastList.add(arr2[i]);
         }
         DashboardUser du = new DashboardUser();
