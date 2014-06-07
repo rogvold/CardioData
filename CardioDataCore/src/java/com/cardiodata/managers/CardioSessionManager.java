@@ -388,30 +388,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         List<User> users = ugMan.getUsersInGroup(g.getId());
         List<DashboardUser> list = new ArrayList();
         for (User u : users){
-            Long sessionId = getTheMostFreshCardioMoodSessionIdOfUser(u.getId());
-            CardioSessionWithData d = getCardioSessionWihData(sessionId, JsonRRInterval.class.getSimpleName());
-            List<CardioDataItem> items = d.getDataItems();
-            double[] arr = CalcManager.getArrayFromRRCardioDataItemList(items);
-            
-            
-            Double bpm = null;
-            Double lastSDNN = null;
-            if (!items.isEmpty()){
-                bpm = CalcManager.getLastFilteredBPM(arr);
-                lastSDNN = CalcManager.getLastSDNN(arr);
-            }
-            DashboardUser du = new DashboardUser();
-            du.setBpm(bpm);
-            du.setSDNN(lastSDNN);
-            du.setId(u.getId());
-            String firstName = u.getFirstName();
-            if ((firstName == null || "".equals(firstName)) && (u.getLastName() == null || "".equals(u.getLastName())) ){
-                UserAccount ac = userMan.getUserAccountByUserId(u.getId());
-                firstName = ac.getLogin();
-            }
-            du.setFirstName(firstName);
-            du.setLastName(u.getLastName());
-            list.add(du);
+            list.add(getDashboardUserById(u));
         }
         return list;
     }
