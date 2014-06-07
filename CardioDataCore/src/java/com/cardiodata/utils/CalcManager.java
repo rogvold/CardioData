@@ -29,6 +29,10 @@ public class CalcManager {
     private static final int SIGMA_WINDOW_SIZE_INT = 20;
     private static final int SIGMA_STEP_SIZE_INT = 5;
 
+    public static double[] pisarukFilter(double[] arr){
+        return filter.doFilter(arr);
+    }
+    
     public static double[][] getSpectrum(double[] intervals) {
 
         double[] t = new double[intervals.length];

@@ -338,7 +338,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         return sessionId;
     }
 
-    private DashboardUser getDashboardUserById(User u) throws CardioDataException{
+    private DashboardUser getDashboardUser(User u) throws CardioDataException{
         if (u == null){
             throw new CardioDataException("User is null");
         }
@@ -348,7 +348,6 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         List<CardioDataItem> items = d.getDataItems();
         double[] arr = CalcManager.getArrayFromRRCardioDataItemList(items);
         
-
         Double bpm = null;
         Double lastSDNN = null;
         if (!items.isEmpty()){
@@ -359,7 +358,11 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         int to = arr.length;
         List<Double> lastList = new ArrayList();
         double[] arr2 = Arrays.copyOfRange(arr, from, to);
+        arr2 = CalcManager.pisarukFilter(arr2);
         for (int i = 0; i < arr2.length; i++){
+            if (arr2[i] > 220 || arr2[i] < 40){
+                continue;
+            }
             lastList.add(arr2[i]);
         }
         DashboardUser du = new DashboardUser();
@@ -388,7 +391,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         List<User> users = ugMan.getUsersInGroup(g.getId());
         List<DashboardUser> list = new ArrayList();
         for (User u : users){
-            list.add(getDashboardUserById(u));
+            list.add(getDashboardUser(u));
         }
         return list;
     }
