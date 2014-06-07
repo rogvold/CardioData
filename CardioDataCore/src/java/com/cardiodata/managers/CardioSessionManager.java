@@ -425,6 +425,35 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         
         return new CalculatedRRSession(cs, map);
     }
+
+    @Override
+    public List<CardioDataItem> getCardioDataItemsBetweenTwoDates(Long userId, Long fromTimestamp, Long toTimestamp, String className) throws CardioDataException {
+        if (userId == null){
+            throw new CardioDataException("userId is null");
+        }
+        if (fromTimestamp == null){
+            throw new CardioDataException("fromTimestamp is null");
+        }
+        if (toTimestamp == null){
+            throw new CardioDataException("toTimestamp is null");
+        }
+        if (className == null || "".equals(className)){
+            throw new CardioDataException("className is not specified");
+        }
+        List<CardioDataItem> list = em.createQuery("select item from CardioDataItem item, CardioMoodSession cs where "
+                + " cs.userId=:userId and item.sessionId=cs.id and cs.dataClassName=:className and "
+                + " item.creationTimestamp > :fromTimestamp and "
+                + " item.creationTimestamp < :toTimestamp order by item.creationTimestamp asc")
+                .setParameter("userId", userId)
+                .setParameter("fromTimestamp", fromTimestamp)
+                .setParameter("toTimestamp", toTimestamp)
+                .setParameter("className", className)
+                .getResultList();
+        if (list == null || list.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+        return list;
+    }
     
     
 }

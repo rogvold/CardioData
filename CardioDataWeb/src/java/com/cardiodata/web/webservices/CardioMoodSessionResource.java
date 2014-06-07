@@ -1,5 +1,6 @@
 package com.cardiodata.web.webservices;
 
+import com.cardiodata.core.jpa.CardioDataItem;
 import com.cardiodata.core.jpa.CardioMoodSession;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.CardioDataExceptionWrapper;
@@ -178,6 +179,20 @@ public class CardioMoodSessionResource {
             tokenMan.assertToken(userId, token);
             CardioMoodSession cs = cardMan.renameCardioSession(sessionId, newName);
             JsonResponse<CardioMoodSession> jr = new JsonResponse<CardioMoodSession>(ResponseConstants.OK, cs);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
+    @POST
+    @Produces("application/json")
+    @Path("getFilteredCardioDataItems")
+    public Response getFilteredCardioDataItems(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("className") String className, @FormParam("fromTimestamp") Long fromTimestamp, @FormParam("toTimestamp") Long toTimestamp) {
+        try {
+            tokenMan.assertToken(userId, token);
+            List<CardioDataItem> list = cardMan.getCardioDataItemsBetweenTwoDates(userId, fromTimestamp, toTimestamp, className);
+            JsonResponse<List<CardioDataItem>> jr = new JsonResponse<List<CardioDataItem>>(ResponseConstants.OK, list);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
