@@ -1,6 +1,7 @@
 package com.cardiodata.core.jpa;
 
 import com.cardiodata.enums.AccountStatusEnum;
+import com.cardiodata.enums.UserGenderEnum;
 import com.cardiodata.enums.UserRoleEnum;
 import com.cardiodata.enums.UserStatusEnum;
 import java.io.Serializable;
@@ -33,6 +34,12 @@ public class User implements Serializable {
     
     protected Double weight;
     protected Double height;
+    
+    @Enumerated(EnumType.STRING)
+    protected UserGenderEnum gender;
+    
+    protected String phoneNumber;
+    protected Long birthTimestamp;
     
     
 
@@ -122,6 +129,30 @@ public class User implements Serializable {
 
     public void setHeight(Double height) {
         this.height = height;
+    }
+
+    public UserGenderEnum getGender() {
+        return gender;
+    }
+
+    public void setGender(UserGenderEnum gender) {
+        this.gender = gender;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Long getBirthTimestamp() {
+        return birthTimestamp;
+    }
+
+    public void setBirthTimestamp(Long birthTimestamp) {
+        this.birthTimestamp = birthTimestamp;
     }
 
     

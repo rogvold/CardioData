@@ -7,6 +7,7 @@ import com.cardiodata.core.jpa.UserGroup;
 import com.cardiodata.core.jpa.UserGroupBinding;
 import com.cardiodata.enums.AccountStatusEnum;
 import com.cardiodata.enums.AccountTypeEnum;
+import com.cardiodata.enums.UserGenderEnum;
 import com.cardiodata.enums.UserGroupPrivacyEnum;
 import com.cardiodata.enums.UserGroupStatusEnum;
 import com.cardiodata.enums.UserGroupTypeEnum;
@@ -151,6 +152,7 @@ public class UserManager implements UserManagerLocal {
         u.setUserRole(UserRoleEnum.USER);
         u.setUserStatus(UserStatusEnum.ACTIVE);
         u.setLastModificationDate(0L);
+        u.setGender(UserGenderEnum.UNSPECIFIED);
         u = em.merge(u);
 
         UserAccount acc = new UserAccount(login, password, aType, u.getId());
@@ -174,6 +176,7 @@ public class UserManager implements UserManagerLocal {
         u.setUserRole(UserRoleEnum.TRAINER);
         u.setUserStatus(UserStatusEnum.ACTIVE);
         u.setLastModificationDate(0L);
+        u.setGender(UserGenderEnum.UNSPECIFIED);
         u = em.merge(u);
 
         UserAccount acc = new UserAccount(login, password, aType, u.getId());
@@ -238,6 +241,9 @@ public class UserManager implements UserManagerLocal {
         u.setLastName(updatedUser.getLastName());
         u.setHeight(updatedUser.getHeight());
         u.setWeight(updatedUser.getWeight());
+        u.setBirthTimestamp(updatedUser.getBirthTimestamp());
+        u.setGender(updatedUser.getGender());
+        u.setPhoneNumber(updatedUser.getPhoneNumber());
         u.setLastModificationDate(updatedUser.getLastModificationDate());
         
         return em.merge(u);
