@@ -5,6 +5,7 @@ import com.cardiodata.utils.CalcManager;
 import com.cardiodata.core.jpa.CardioMoodSession;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.*;
+import com.cardiodata.json.entity.JsonRRInterval;
 import com.cardiodata.managers.CardioSessionManagerLocal;
 import com.google.gson.Gson;
 import java.util.List;
@@ -132,7 +133,7 @@ public class CalcResource {
             if (userId == null){
                 throw new CardioDataException("userId is null");
             }
-            Long sessionId = csMan.getTheMostFreshCardioMoodSessionIdOfUser(userId);
+            Long sessionId = csMan.getTheMostFreshCardioMoodSessionIdOfUser(userId, JsonRRInterval.class.getSimpleName());
             JsonResponse<Long> jr = new JsonResponse<Long>(ResponseConstants.OK, sessionId);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {

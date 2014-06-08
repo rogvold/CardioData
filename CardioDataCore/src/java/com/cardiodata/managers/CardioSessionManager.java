@@ -329,12 +329,12 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
 
     @Override
-    public Long getTheMostFreshCardioMoodSessionIdOfUser(Long userId) throws CardioDataException {
+    public Long getTheMostFreshCardioMoodSessionIdOfUser(Long userId, String className) throws CardioDataException {
         if (userId == null){
             throw new CardioDataException("userId is null");
         }
-        List<Long> fList = em.createQuery("select max(item.creationTimestamp) from CardioDataItem item, CardioMoodSession cs where cs.userId=:userId and item.sessionId=cs.id")
-                .setParameter("userId", userId).setMaxResults(0).getResultList();
+        List<Long> fList = em.createQuery("select max(item.creationTimestamp) from CardioDataItem item, CardioMoodSession cs where cs.userId=:userId and item.sessionId=cs.id and cs.dataClassName=:className")
+                .setParameter("userId", userId).setParameter("className", className).setMaxResults(0).getResultList();
         if (fList == null || fList.isEmpty()){
             return null;
         }
@@ -356,7 +356,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
             return null;
         }
         
-        Long sessionId = getTheMostFreshCardioMoodSessionIdOfUser(u.getId());
+        Long sessionId = getTheMostFreshCardioMoodSessionIdOfUser(u.getId(), JsonRRInterval.class.getSimpleName());
         
         CardioSessionWithData d = getCardioSessionWihData(sessionId, JsonRRInterval.class.getSimpleName());
         List<CardioDataItem> items = d.getDataItems();

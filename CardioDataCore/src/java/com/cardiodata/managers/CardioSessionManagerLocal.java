@@ -44,7 +44,7 @@ public interface CardioSessionManagerLocal {
     
     public void finishCardioSession(Long sessionId, Long endTimestamp) throws CardioDataException;
     
-    public Long getTheMostFreshCardioMoodSessionIdOfUser(Long userId) throws CardioDataException;
+    public Long getTheMostFreshCardioMoodSessionIdOfUser(Long userId, String className) throws CardioDataException;
     
     public List<DashboardUser> getDashboardUsersOfTrainer(Long trainerId) throws CardioDataException;
     
