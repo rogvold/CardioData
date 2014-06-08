@@ -346,7 +346,8 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 
     private DashboardUser getDashboardUser(User u) throws CardioDataException{
         if (u == null){
-            throw new CardioDataException("User is null");
+            //throw new CardioDataException("User is null");
+            return null;
         }
         
         Long sessionId = getTheMostFreshCardioMoodSessionIdOfUser(u.getId());
@@ -374,14 +375,22 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         du.setSDNN(lastSDNN);
         du.setId(u.getId());
         du.setLastIntervals(lastList);
-        du.setLastUpdatedTimestamp(items.get(items.size() - 1).getCreationTimestamp());
+        if (items.isEmpty() == false){
+            du.setLastUpdatedTimestamp(items.get(items.size() - 1).getCreationTimestamp());
+        }
+        
+        
         String firstName = u.getFirstName();
-        if ((firstName == null || "".equals(firstName)) && (u.getLastName() == null || "".equals(u.getLastName())) ){
+        if (u != null){
+            if ((firstName == null || "".equals(firstName)) && (u.getLastName() == null || "".equals(u.getLastName()) ) ){
             UserAccount ac = userMan.getUserAccountByUserId(u.getId());
             firstName = ac.getLogin();
         }
-        du.setFirstName(firstName);
-        du.setLastName(u.getLastName());
+            du.setFirstName(firstName);
+            du.setLastName(u.getLastName());
+        }
+
+
         
         return du;
     }
