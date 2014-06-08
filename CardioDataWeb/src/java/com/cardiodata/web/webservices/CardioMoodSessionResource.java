@@ -132,9 +132,7 @@ public class CardioMoodSessionResource {
             if (cs == null){
                 throw new CardioDataException("session with id=" + sessionId + " is not found");
             }
-            if (sessionId.equals(cs.getUserId()) == false){
-                throw new CardioDataException("access denied", ResponseConstants.ACCESS_DENIED_CODE);
-            }
+            
             cardMan.finishCardioSession(sessionId, endTimestamp);
             JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
