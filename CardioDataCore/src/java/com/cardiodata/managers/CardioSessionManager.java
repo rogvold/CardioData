@@ -100,6 +100,9 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 
     @Override
     public CardioMoodSession getCardioSessionById(Long sessionId) throws CardioDataException {
+        if (sessionId == null){
+            throw new CardioDataException("sessionId is null");
+        }
         CardioMoodSession cs = em.find(CardioMoodSession.class, sessionId);
         return cs;
     }
@@ -138,6 +141,9 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 
     @Override
     public CardioSessionWithData getCardioSessionWihData(Long sessionId, String className) throws CardioDataException {
+        if (sessionId == null){
+            return new CardioSessionWithData(Collections.EMPTY_LIST, null, null, null, 51L, null, null, null, null, null, null);
+        }
         CardioMoodSession cs = getCardioSessionById(sessionId);
         if (cs == null) {
             throw new CardioDataException("cardiosession with id=" + sessionId + " is not found");
@@ -344,6 +350,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         }
         
         Long sessionId = getTheMostFreshCardioMoodSessionIdOfUser(u.getId());
+        
         CardioSessionWithData d = getCardioSessionWihData(sessionId, JsonRRInterval.class.getSimpleName());
         List<CardioDataItem> items = d.getDataItems();
         double[] arr = CalcManager.getArrayFromRRCardioDataItemList(items);
