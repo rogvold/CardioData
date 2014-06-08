@@ -3,6 +3,7 @@ package com.cardiodata.web.webservices;
 import com.cardiodata.core.jpa.CardioMoodSession;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.*;
+import com.cardiodata.json.entity.JsonRRInterval;
 import com.cardiodata.managers.CardioSessionManagerLocal;
 import java.util.List;
 import javax.ejb.EJB;
@@ -53,7 +54,7 @@ public class CardioSessionResource {
     public Response getCardioSessionsOfUser(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId) {
         try {
             tokenMan.assertToken(userId, token);
-            List<CardioMoodSession> list = cardMan.getCardioSessionsOfUser(userId, serverId);
+            List<CardioMoodSession> list = cardMan.getCardioSessionsOfUser(userId, serverId, JsonRRInterval.class.getSimpleName());
             JsonResponse<List<CardioMoodSession>> jr = new JsonResponse<List<CardioMoodSession>>(ResponseConstants.OK, list);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {

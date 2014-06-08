@@ -36,7 +36,7 @@ public interface CardioSessionManagerLocal {
     
     public void rewriteCardioSessionData(String jsonIncomingData) throws CardioDataException;
     
-    public List<CardioMoodSession> getCardioSessionsOfUser(Long userId, Long serverId) throws CardioDataException;
+    public List<CardioMoodSession> getCardioSessionsOfUser(Long userId, Long serverId, String className) throws CardioDataException;
     
     public boolean isSessionOfUser(Long userId, Long sessionId) throws CardioDataException;
     

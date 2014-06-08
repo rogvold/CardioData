@@ -64,10 +64,10 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("getCardioMoodSessionsOfUser")
-    public Response getCardioMoodSessionsOfUser(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId) {
+    public Response getCardioMoodSessionsOfUser(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("className") String className) {
         try {
             tokenMan.assertToken(userId, token);
-            List<CardioMoodSession> list = cardMan.getCardioSessionsOfUser(userId, serverId);
+            List<CardioMoodSession> list = cardMan.getCardioSessionsOfUser(userId, serverId, className);
             JsonResponse<List<CardioMoodSession>> jr = new JsonResponse<List<CardioMoodSession>>(ResponseConstants.OK, list);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {

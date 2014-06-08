@@ -272,8 +272,14 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
 
     @Override
-    public List<CardioMoodSession> getCardioSessionsOfUser(Long userId, Long serverId) throws CardioDataException {
+    public List<CardioMoodSession> getCardioSessionsOfUser(Long userId, Long serverId, String className) throws CardioDataException {
         Query q = em.createQuery("select c from CardioMoodSession c where c.userId = :userId and c.serverId = :serverId").setParameter("userId", userId).setParameter("serverId", serverId);
+        if ((className != null) && ("".equals(className) == false)){
+            q = em.createQuery("select c from CardioMoodSession c where c.userId = :userId and c.serverId = :serverId and c.dataClassName=:className")
+                    .setParameter("userId", userId)
+                    .setParameter("serverId", serverId)
+                    .setParameter("className", className);
+        }
         List<CardioMoodSession> list = q.getResultList();
         if (list == null || list.isEmpty()) {
             return Collections.EMPTY_LIST;
@@ -418,9 +424,16 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         if (cs == null){
             throw new CardioDataException("session with id=" + sessionId + " is not found");
         }
+        Map<String, double[][]> map = new HashMap();
         CardioSessionWithData d = getCardioSessionWihData(sessionId, JsonRRInterval.class.getSimpleName());
         List<CardioDataItem> items = d.getDataItems();
+        if (items.isEmpty()){
+            return new CalculatedRRSession(cs, map);
+        }
         double[][] arr = CalcManager.get2DArrayFromRRCardioDataItemList(items);
+        
+        
+        
         if (useFilter == true){
             arr = CalcManager.filter2DRRArray(arr);
         }
@@ -429,7 +442,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         System.out.println(arr);
         System.out.println("arr.length = " + arr[0].length);
         
-        Map<String, double[][]> map = new HashMap();
+        map = new HashMap();
         map.put("RR", arr);
         
         double[][] arrSDNN = CalcManager.getSDNN(arr[1], arr[0], false);
