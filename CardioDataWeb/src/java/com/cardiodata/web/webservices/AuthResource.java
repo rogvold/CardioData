@@ -105,6 +105,23 @@ public class AuthResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
+    
+    @POST
+    @Produces("application/json")
+    @Path("getUserById")
+    public Response getUserById(@FormParam("token") String token, @FormParam("userId") Long userId) {
+        try {
+            if (token == null) {
+                throw new CardioDataException("token is not specified");
+            }
+            tokenMan.assertToken(userId, token);
+            User u = userMan.getUserById(userId);
+            JsonResponse<User> jr = new JsonResponse<User>(ResponseConstants.OK, u);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
 
     @POST
     @Produces("application/json")

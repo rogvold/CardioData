@@ -420,8 +420,8 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         map.put("SDNN", arrSDNN);
         
         //waitung for Anton bug fix( HeartRateUtils - 69 and 184)
-        //double[][] arrTension = CalcManager.getTensionArray(arr[1], arr[0], false);
-        //map.put("SI", arrTension);
+        double[][] arrTension = CalcManager.getTensionArray(arr[1], arr[0], false);
+        map.put("SI", arrTension);
         
         return new CalculatedRRSession(cs, map);
     }
