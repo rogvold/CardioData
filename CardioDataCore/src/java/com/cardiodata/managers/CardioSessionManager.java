@@ -39,21 +39,23 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     
 
     @Override
-    public CardioMoodSession createCardioSession(Long userId, Long serverId, String dataClassName) throws CardioDataException {
+    public CardioMoodSession createCardioSession(Long userId, Long serverId, String dataClassName, Long creationTimestamp) throws CardioDataException {
         if (userId == null || serverId == null) {
             throw new CardioDataException("userId or serverId is null");
         }
         CardioMoodSession cs = new CardioMoodSession();
         cs.setUserId(userId);
         cs.setServerId(serverId);
-        cs.setCreationTimestamp((new Date()).getTime());
+        Long cT = (creationTimestamp == null) ? (new Date()).getTime() : creationTimestamp;
+        cs.setCreationTimestamp(cT);
+        cs.setLastModificationTimestamp(cT);
         cs.setDataClassName(dataClassName);
         return em.merge(cs);
     }
 
     @Override
     public CardioMoodSession createCardioSession(CardioMoodSession cs) throws CardioDataException {
-        CardioMoodSession csess = createCardioSession(cs.getUserId(), cs.getServerId(), cs.getDataClassName());
+        CardioMoodSession csess = createCardioSession(cs.getUserId(), cs.getServerId(), cs.getDataClassName(), cs.getCreationTimestamp());
         csess.setDataClassName(cs.getDataClassName());
         csess.setDescription(cs.getDescription());
         csess.setName(cs.getName());
@@ -173,13 +175,17 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
 //            throw new CardioDataException("session was updated on server", ResponseConstants.SESSION_IS_MODIFIED_ON_SERVER_CODE);
 //        }
 //        session.setDataClassName(cw.getDataClassName());
-        em.merge(session);
+        //em.merge(session);
         List<CardioDataItem> oldList = getSessionCardioItems(sessionId, null);
         dataItems = getNewDataItems(oldList, dataItems);
+        Long lastModificationTimestamp = session.getLastModificationTimestamp();
         for (CardioDataItem cdi : dataItems) {
             CardioDataItem ci = new CardioDataItem(cdi.getDataItem(), sessionId, cdi.getNumber(), cdi.getCreationTimestamp());
+            lastModificationTimestamp = cdi.getCreationTimestamp();
             em.merge(ci);
         }
+        session.setLastModificationTimestamp(lastModificationTimestamp);
+        em.merge(session);
     }
 
     @Override
@@ -428,19 +434,18 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         CardioSessionWithData d = getCardioSessionWihData(sessionId, JsonRRInterval.class.getSimpleName());
         List<CardioDataItem> items = d.getDataItems();
         if (items.isEmpty()){
-            return new CalculatedRRSession(cs, map);
+            return new CalculatedRRSession(cs, map, cs.getCreationTimestamp());
         }
         double[][] arr = CalcManager.get2DArrayFromRRCardioDataItemList(items);
         
         
         
         if (useFilter == true){
+            arr = CalcManager.filter2DRRArrayWithBaevskyFilter(arr);
             arr = CalcManager.filter2DRRArray(arr);
         }
-        System.out.println("getCalculatedRRSession: arr = ");
         
-        System.out.println(arr);
-        System.out.println("arr.length = " + arr[0].length);
+        Long lastUpd = items.get(items.size() - 1).getCreationTimestamp();
         
         map = new HashMap();
         map.put("RR", arr);
@@ -448,11 +453,10 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         double[][] arrSDNN = CalcManager.getSDNN(arr[1], arr[0], false);
         map.put("SDNN", arrSDNN);
         
-        //waitung for Anton bug fix( HeartRateUtils - 69 and 184)
         double[][] arrTension = CalcManager.getTensionArray(arr[1], arr[0], false);
         map.put("SI", arrTension);
         
-        return new CalculatedRRSession(cs, map);
+        return new CalculatedRRSession(cs, map, lastUpd);
     }
 
     @Override

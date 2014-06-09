@@ -5,6 +5,7 @@ import com.cardiodata.json.entity.JsonRRInterval;
 import com.cardiomood.math.HeartRateUtils;
 import com.cardiomood.math.filter.ArtifactFilter;
 import com.cardiomood.math.filter.PisarukArtifactFilter;
+import com.cardiomood.math.filter.SimpleBayevskyArtifactFilter;
 import com.cardiomood.math.filter.SimpleInterpolationArtifactFilter;
 import com.cardiomood.math.spectrum.FFT;
 import com.cardiomood.math.spectrum.SpectralAnalysis;
@@ -24,6 +25,8 @@ public class CalcManager {
     private static final double SIGMA_WINDOW_SIZE = 20;
     private static final double SIGMA_STEP_SIZE = 5;
     private static final ArtifactFilter filter = new PisarukArtifactFilter();
+    private static final ArtifactFilter baevskyFilter = new SimpleBayevskyArtifactFilter();
+    
     private static final int STRESS_WINDOW_SIZE_INT = 120 * 1000;
     private static final int STRESS_STEP_SIZE_INT = 5 * 1000;
     private static final int SIGMA_WINDOW_SIZE_INT = 20;
@@ -31,6 +34,10 @@ public class CalcManager {
 
     public static double[] pisarukFilter(double[] arr){
         return filter.doFilter(arr);
+    }
+    
+    public static double[] baevskyFilter(double[] arr){
+        return baevskyFilter.doFilter(arr);
     }
     
     public static double[][] getSpectrum(double[] intervals) {
@@ -120,6 +127,12 @@ public class CalcManager {
     
     public static double[][] filter2DRRArray(double[][] arr){
         arr[1] = filter.doFilter(arr[1]);
+        arr[0] = Arrays.copyOf(arr[0], arr[0].length);
+        return arr;
+    }
+    
+    public static double[][] filter2DRRArrayWithBaevskyFilter(double[][] arr){
+        arr[1] = baevskyFilter.doFilter(arr[1]);
         arr[0] = Arrays.copyOf(arr[0], arr[0].length);
         return arr;
     }

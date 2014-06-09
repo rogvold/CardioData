@@ -16,7 +16,7 @@ import javax.ejb.Local;
 @Local
 public interface CardioSessionManagerLocal {
 
-    public CardioMoodSession createCardioSession(Long userId, Long serverId, String dataClassName) throws CardioDataException;
+    public CardioMoodSession createCardioSession(Long userId, Long serverId, String dataClassName, Long creationTimestamp) throws CardioDataException;
 
     public CardioMoodSession createCardioSession(CardioMoodSession cs) throws CardioDataException;
 

@@ -46,13 +46,18 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("createCardioMoodSession")
-    public Response createCardioMoodSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("className") String className) {
+    public Response createCardioMoodSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("className") String className, @FormParam("creationTimestamp") Long creationTimestamp) {
         try {
             tokenMan.assertToken(userId, token);
             if (className == null || "".equals(className)){
                 throw new CardioDataException("className is not specified");
             }
-            CardioMoodSession cs = cardMan.createCardioSession(userId, serverId, className);
+//            TODO: uncomment after Anton's ready
+//            if (creationTimestamp == null){
+//                throw new CardioDataException("creationTimestamp is not specified");
+//            }
+            
+            CardioMoodSession cs = cardMan.createCardioSession(userId, serverId, className, creationTimestamp);
             JsonResponse<CardioMoodSession> jr = new JsonResponse<CardioMoodSession>(ResponseConstants.OK, cs);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
