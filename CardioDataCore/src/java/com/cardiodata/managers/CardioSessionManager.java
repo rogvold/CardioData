@@ -387,6 +387,8 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         du.setSDNN(lastSDNN);
         du.setId(u.getId());
         du.setLastIntervals(lastList);
+        du.setLastSessionCreationTimestamp(d.getCreationTimestamp());
+        du.setLastSessionEndTimestamp(d.getEndTimestamp());
         if (items.isEmpty() == false){
             du.setLastUpdatedTimestamp(items.get(items.size() - 1).getCreationTimestamp());
         }
