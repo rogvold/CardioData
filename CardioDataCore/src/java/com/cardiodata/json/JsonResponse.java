@@ -9,11 +9,13 @@ public class JsonResponse<T> {
     private Integer responseCode;
     private JsonError error;
     private T data;
+    private Long serverTime;
 
     public JsonResponse(Integer responseCode, JsonError error, T object) {
         this.responseCode = responseCode;
         this.error = error;
         this.data = object;
+        this.serverTime = System.currentTimeMillis();
     }
 
     public JsonResponse(Integer responseCode, T data) {
@@ -24,6 +26,24 @@ public class JsonResponse<T> {
     public JsonResponse() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    public Long getServerTime() {
+        return serverTime;
+    }
+
+    public void setServerTime(Long serverTime) {
+        this.serverTime = serverTime;
+    }
+    
+    
 
     public JsonError getError() {
         return error;

@@ -79,6 +79,20 @@ public class CardioMoodSessionResource {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);
         }
     }
+    
+    @POST
+    @Produces("application/json")
+    @Path("getLastModifiedSessionsOfUser")
+    public Response getLastModifiedSessionsOfUser(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("className") String className, @FormParam("clientTimestamp") Long clientTimestamp, @FormParam("fromTimestamp") Long fromTimestamp) {
+        try {
+            tokenMan.assertToken(userId, token);
+            List<CardioMoodSession> list = cardMan.getLastModifiedSessionsOfUser(userId, serverId, className, fromTimestamp, clientTimestamp);
+            JsonResponse<List<CardioMoodSession>> jr = new JsonResponse<List<CardioMoodSession>>(ResponseConstants.OK, list);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
 
     
     @POST
@@ -116,8 +130,8 @@ public class CardioMoodSessionResource {
     public Response rewriteCardioMoodSessionData(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serializedData") String serializedData) {
         try {
             tokenMan.assertToken(userId, token);
-            cardMan.rewriteCardioSessionData(serializedData);
-            JsonResponse<String> jr = new JsonResponse<String>(ResponseConstants.OK, ResponseConstants.YES);
+            CardioMoodSession cs = cardMan.rewriteCardioSessionData(serializedData);
+            JsonResponse<CardioMoodSession> jr = new JsonResponse<CardioMoodSession>(ResponseConstants.OK, cs);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);

@@ -34,9 +34,11 @@ public interface CardioSessionManagerLocal {
     
     public void saveCardioSessionData(String jsonIncomingData) throws CardioDataException;
     
-    public void rewriteCardioSessionData(String jsonIncomingData) throws CardioDataException;
+    public CardioMoodSession rewriteCardioSessionData(String jsonIncomingData) throws CardioDataException;
     
     public List<CardioMoodSession> getCardioSessionsOfUser(Long userId, Long serverId, String className) throws CardioDataException;
+    
+    public List<CardioMoodSession> getLastModifiedSessionsOfUser(Long userId, Long serverId, String className, Long fromTimestamp, Long clientTimestamp) throws CardioDataException;
     
     public boolean isSessionOfUser(Long userId, Long sessionId) throws CardioDataException;
     

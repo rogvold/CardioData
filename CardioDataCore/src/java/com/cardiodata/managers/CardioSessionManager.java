@@ -27,6 +27,7 @@ import javax.persistence.Query;
  */
 @Stateless
 public class CardioSessionManager implements CardioSessionManagerLocal {
+    
 
     @PersistenceContext(unitName = "CardioDataCorePU")
     EntityManager em;
@@ -48,7 +49,10 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         cs.setServerId(serverId);
         Long cT = (creationTimestamp == null) ? (new Date()).getTime() : creationTimestamp;
         cs.setCreationTimestamp(cT);
-        cs.setLastModificationTimestamp(cT);
+        
+        Long mT = (creationTimestamp == null) ? 0L : creationTimestamp;
+        cs.setLastModificationTimestamp(mT);
+        
         cs.setDataClassName(dataClassName);
         return em.merge(cs);
     }
@@ -189,9 +193,19 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
 
     @Override
-    public void rewriteCardioSessionData(String jsonIncomingData) throws CardioDataException {
+    public CardioMoodSession rewriteCardioSessionData(String jsonIncomingData) throws CardioDataException {
         CardioSessionWithData cw = (new Gson()).fromJson(jsonIncomingData, CardioSessionWithData.class);
         Long sessionId = cw.getId();
+        
+        if (sessionId == null){
+            CardioMoodSession newSession = new CardioMoodSession();
+            newSession.setCreationTimestamp(cw.getCreationTimestamp());
+            newSession.setLastModificationTimestamp(sessionId);
+            newSession = em.merge(newSession);
+            sessionId = newSession.getId();
+            System.out.println("created session with id = " + sessionId);
+        }
+        
         System.out.println("rewriteCardioSessionData: sessionId = " + sessionId + "");
         deleteCardioDataItems(sessionId);
         List<CardioDataItem> dataItems = cw.getDataItems();
@@ -202,11 +216,11 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         }
 
         if (cw.getLastModificationTimestamp() == null) {
-            cw.setLastModificationTimestamp((new Date()).getTime());
+            cw.setLastModificationTimestamp(0L);
         }
 
         if (session.getLastModificationTimestamp() == null) {
-            session.setLastModificationTimestamp((new Date()).getTime());
+            session.setLastModificationTimestamp(0L);
         }
 
         Long extModifDate = Math.min(cw.getLastModificationTimestamp(), (new Date()).getTime());
@@ -218,14 +232,15 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         session.setDescription(cw.getDescription());
         session.setDataClassName(cw.getDataClassName());
         session.setCreationTimestamp(cw.getCreationTimestamp());
-        session.setLastModificationTimestamp(cw.getLastModificationTimestamp() == null ? (new Date()).getTime() : cw.getLastModificationTimestamp());
+        session.setLastModificationTimestamp(cw.getLastModificationTimestamp() == null ? 0L : cw.getLastModificationTimestamp());
         session.setOriginalSessionId(cw.getOriginalSessionId());
         session.setEndTimestamp(cw.getEndTimestamp());
-        em.merge(session);
+        
         for (CardioDataItem cdi : dataItems) {
             CardioDataItem ci = new CardioDataItem(cdi.getDataItem(), sessionId, cdi.getNumber(), cdi.getCreationTimestamp());
             em.merge(ci);
         }
+        return em.merge(session);
     }
 
     private void deleteCardioDataItems(Long cardioSessionId) throws CardioDataException {
@@ -292,6 +307,38 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         }
         return list;
     }
+    
+    @Override
+    public List<CardioMoodSession> getLastModifiedSessionsOfUser(Long userId, Long serverId, String className, Long fromTimestamp, Long clientTimestamp) throws CardioDataException {
+        if (userId == null){
+            throw new CardioDataException("userId is null");
+        }
+        if (serverId == null){
+            throw new CardioDataException("serverId is null");
+        }
+        if (className == null || "".equals(className)){
+            throw new CardioDataException("className is empty");
+        }
+        if (fromTimestamp == null){
+            throw new CardioDataException("fromTimestamp is null");
+        }
+        if (clientTimestamp == null){
+            throw new CardioDataException("className is null");
+        }
+        Long serverTimestamp = System.currentTimeMillis();
+        Long fromT = fromTimestamp + (serverTimestamp - clientTimestamp);
+        Query q = em.createQuery("select c from CardioMoodSession c where c.userId = :userId and c.dataClassName = :className and c.serverId = :serverId and c.lastModificationTimestamp > :fromT order by c.creationTimestamp desc")
+                .setParameter("userId", userId)
+                .setParameter("serverId", serverId)
+                .setParameter("className", className)
+                .setParameter("fromT", fromT);
+        List<CardioMoodSession> list = q.getResultList();
+        if (list == null || list.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+        return list;
+    }
+    
 
     @Override
     public boolean isSessionOfUser(Long userId, Long sessionId) throws CardioDataException {
@@ -489,6 +536,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         }
         return list;
     }
-    
+
+
     
 }
