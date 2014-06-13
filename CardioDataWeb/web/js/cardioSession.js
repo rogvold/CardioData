@@ -48,8 +48,8 @@ CardioSessionManager = function(){
         var s = '<tr><th>session id</th> <th>creation date</th><tr/>';
         for (var i in list){
             var s2 = '<tr>'; 
-            s2+= '<td><a target="_blank" href="session.html?sessionId=' + list[i].id + '" >' + list[i].id + '</a></td>';
-            s2+= '<td> <a target="_blank" href="session.html?sessionId=' + list[i].id + '" >' + moment(list[i].creationTimestamp).format('LLLL') +'</a></td>';
+            s2+= '<td><a target="_blank" href="spectrum.html?sessionId=' + list[i].id + '" >' + list[i].id + '</a></td>';
+            s2+= '<td> <a target="_blank" href="spectrum.html?sessionId=' + list[i].id + '" >' + moment(list[i].creationTimestamp).format('LLLL') +'</a></td>';
             s2+= '</tr>';
             s+= s2;
         }

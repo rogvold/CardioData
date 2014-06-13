@@ -38,7 +38,7 @@ public interface CardioSessionManagerLocal {
     
     public List<CardioMoodSession> getCardioSessionsOfUser(Long userId, Long serverId, String className) throws CardioDataException;
     
-    public List<CardioMoodSession> getLastModifiedSessionsOfUser(Long userId, Long serverId, String className, Long fromTimestamp, Long clientTimestamp) throws CardioDataException;
+    public List<CardioMoodSession> getLastModifiedSessionsOfUser(Long userId, Long serverId, String className, Long fromTimestamp) throws CardioDataException;
     
     public boolean isSessionOfUser(Long userId, Long sessionId) throws CardioDataException;
     

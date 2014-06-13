@@ -44,6 +44,8 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         if (userId == null || serverId == null) {
             throw new CardioDataException("userId or serverId is null");
         }
+        
+        
         CardioMoodSession cs = new CardioMoodSession();
         cs.setUserId(userId);
         cs.setServerId(serverId);
@@ -196,7 +198,6 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     public CardioMoodSession rewriteCardioSessionData(String jsonIncomingData) throws CardioDataException {
         CardioSessionWithData cw = (new Gson()).fromJson(jsonIncomingData, CardioSessionWithData.class);
         Long sessionId = cw.getId();
-        
         if (sessionId == null){
             CardioMoodSession newSession = new CardioMoodSession();
             newSession.setCreationTimestamp(cw.getCreationTimestamp());
@@ -232,7 +233,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         session.setDescription(cw.getDescription());
         session.setDataClassName(cw.getDataClassName());
         session.setCreationTimestamp(cw.getCreationTimestamp());
-        session.setLastModificationTimestamp(cw.getLastModificationTimestamp() == null ? 0L : cw.getLastModificationTimestamp());
+        session.setLastModificationTimestamp((cw.getLastModificationTimestamp() == null ? 0L : cw.getLastModificationTimestamp()));
         session.setOriginalSessionId(cw.getOriginalSessionId());
         session.setEndTimestamp(cw.getEndTimestamp());
         
@@ -309,7 +310,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
     }
     
     @Override
-    public List<CardioMoodSession> getLastModifiedSessionsOfUser(Long userId, Long serverId, String className, Long fromTimestamp, Long clientTimestamp) throws CardioDataException {
+    public List<CardioMoodSession> getLastModifiedSessionsOfUser(Long userId, Long serverId, String className, Long fromTimestamp) throws CardioDataException {
         if (userId == null){
             throw new CardioDataException("userId is null");
         }
@@ -322,11 +323,8 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         if (fromTimestamp == null){
             throw new CardioDataException("fromTimestamp is null");
         }
-        if (clientTimestamp == null){
-            throw new CardioDataException("className is null");
-        }
-        Long serverTimestamp = System.currentTimeMillis();
-        Long fromT = fromTimestamp + (serverTimestamp - clientTimestamp);
+
+        Long fromT = fromTimestamp;
         Query q = em.createQuery("select c from CardioMoodSession c where c.userId = :userId and c.dataClassName = :className and c.serverId = :serverId and c.lastModificationTimestamp > :fromT order by c.creationTimestamp desc")
                 .setParameter("userId", userId)
                 .setParameter("serverId", serverId)

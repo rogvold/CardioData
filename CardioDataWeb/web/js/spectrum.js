@@ -1,6 +1,7 @@
 CardioSpectrum = function(intervals){
     var self = this;
     this.series = intervals;
+    this.base = "http://data.cardiomood.com";
     
     this.getSpectrum = function(intervals){
         var d = {
@@ -11,7 +12,7 @@ CardioSpectrum = function(intervals){
         }
 
         $.ajax({
-            url: '/CardioDataWeb/resources/calc/getSpectrum',
+            url: self.base + '/CardioDataWeb/resources/calc/getSpectrum',
             //            data: JSON.stringify(d),
             //            data: {
             //                data : d
@@ -25,8 +26,6 @@ CardioSpectrum = function(intervals){
                 
             },
             type: 'POST',
-            //            dataType: 'json',
-            contentType: "application/json",
             success:function(data){
                 console.log(data);
                 //                alert(data);

@@ -46,17 +46,15 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("createCardioMoodSession")
-    public Response createCardioMoodSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("className") String className, @FormParam("creationTimestamp") Long creationTimestamp) {
+    public Response createCardioMoodSession(@FormParam("token") String token, 
+            @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, 
+            @FormParam("className") String className, @FormParam("creationTimestamp") Long creationTimestamp) {
         try {
             tokenMan.assertToken(userId, token);
             if (className == null || "".equals(className)){
                 throw new CardioDataException("className is not specified");
             }
-//            TODO: uncomment after Anton's ready
-//            if (creationTimestamp == null){
-//                throw new CardioDataException("creationTimestamp is not specified");
-//            }
-            
+
             CardioMoodSession cs = cardMan.createCardioSession(userId, serverId, className, creationTimestamp);
             JsonResponse<CardioMoodSession> jr = new JsonResponse<CardioMoodSession>(ResponseConstants.OK, cs);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
@@ -69,7 +67,8 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("getCardioMoodSessionsOfUser")
-    public Response getCardioMoodSessionsOfUser(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("className") String className) {
+    public Response getCardioMoodSessionsOfUser(@FormParam("token") String token, 
+            @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("className") String className) {
         try {
             tokenMan.assertToken(userId, token);
             List<CardioMoodSession> list = cardMan.getCardioSessionsOfUser(userId, serverId, className);
@@ -83,10 +82,13 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("getLastModifiedSessionsOfUser")
-    public Response getLastModifiedSessionsOfUser(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("className") String className, @FormParam("clientTimestamp") Long clientTimestamp, @FormParam("fromTimestamp") Long fromTimestamp) {
+    public Response getLastModifiedSessionsOfUser(@FormParam("token") String token, 
+            @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, 
+            @FormParam("className") String className, 
+            @FormParam("fromTimestamp") Long fromTimestamp) {
         try {
             tokenMan.assertToken(userId, token);
-            List<CardioMoodSession> list = cardMan.getLastModifiedSessionsOfUser(userId, serverId, className, fromTimestamp, clientTimestamp);
+            List<CardioMoodSession> list = cardMan.getLastModifiedSessionsOfUser(userId, serverId, className, fromTimestamp);
             JsonResponse<List<CardioMoodSession>> jr = new JsonResponse<List<CardioMoodSession>>(ResponseConstants.OK, list);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
@@ -98,7 +100,8 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("deleteCardioMoodSession")
-    public Response deleteCardioMoodSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId) {
+    public Response deleteCardioMoodSession(@FormParam("token") String token, @FormParam("userId") Long userId, 
+            @FormParam("sessionId") Long sessionId) {
         try {
             tokenMan.assertToken(userId, token);
             cardMan.deleteCardioSession(sessionId);
@@ -113,7 +116,8 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("appendDataToCardioMoodSession")
-    public Response appendDataToCardioSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serializedData") String serializedData) {
+    public Response appendDataToCardioSession(@FormParam("token") String token, 
+            @FormParam("userId") Long userId, @FormParam("serializedData") String serializedData) {
         try {
             tokenMan.assertToken(userId, token);
             cardMan.saveCardioSessionData(serializedData);
@@ -127,7 +131,8 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("rewriteCardioMoodSessionData")
-    public Response rewriteCardioMoodSessionData(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("serializedData") String serializedData) {
+    public Response rewriteCardioMoodSessionData(@FormParam("token") String token, @FormParam("userId") Long userId, 
+            @FormParam("serializedData") String serializedData) {
         try {
             tokenMan.assertToken(userId, token);
             CardioMoodSession cs = cardMan.rewriteCardioSessionData(serializedData);
@@ -141,7 +146,8 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("finishCardioMoodSession")
-    public Response finishCardioMoodSession(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId, @FormParam("endTimestamp") Long endTimestamp) {
+    public Response finishCardioMoodSession(@FormParam("token") String token, @FormParam("userId") Long userId, 
+            @FormParam("sessionId") Long sessionId, @FormParam("endTimestamp") Long endTimestamp) {
         try {
             tokenMan.assertToken(userId, token);
             if (sessionId == null){
@@ -163,7 +169,9 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("updateCardioMoodSessionInfo")
-    public Response updateCardioMoodSessionInfo(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("sessionId") Long sessionId, @FormParam("name") String name, @FormParam("description") String description) {
+    public Response updateCardioMoodSessionInfo(@FormParam("token") String token, @FormParam("userId") Long userId, 
+            @FormParam("sessionId") Long sessionId, @FormParam("name") String name, 
+            @FormParam("description") String description) {
         try {
             tokenMan.assertToken(userId, token);
             CardioMoodSession cs = cardMan.updateCardioSession(sessionId, name, description);
@@ -191,7 +199,9 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("renameCardioMoodSession")
-    public Response renameCardioMoodSession(@FormParam("token") String token, @FormParam("userId") Long userId,  @FormParam("sessionId") Long sessionId, @FormParam("name") String newName) {
+    public Response renameCardioMoodSession(@FormParam("token") String token,
+            @FormParam("userId") Long userId,  @FormParam("sessionId") Long sessionId, 
+            @FormParam("name") String newName) {
         try {
             tokenMan.assertToken(userId, token);
             CardioMoodSession cs = cardMan.renameCardioSession(sessionId, newName);
@@ -205,7 +215,9 @@ public class CardioMoodSessionResource {
     @POST
     @Produces("application/json")
     @Path("getFilteredCardioDataItems")
-    public Response getFilteredCardioDataItems(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("className") String className, @FormParam("fromTimestamp") Long fromTimestamp, @FormParam("toTimestamp") Long toTimestamp) {
+    public Response getFilteredCardioDataItems(@FormParam("token") String token, 
+            @FormParam("userId") Long userId, @FormParam("className") String className, 
+            @FormParam("fromTimestamp") Long fromTimestamp, @FormParam("toTimestamp") Long toTimestamp) {
         try {
             tokenMan.assertToken(userId, token);
             List<CardioDataItem> list = cardMan.getCardioDataItemsBetweenTwoDates(userId, fromTimestamp, toTimestamp, className);
