@@ -1,9 +1,18 @@
-
 package com.cardiodata.core.jpa;
 
+import com.cardiodata.json.AerobicThresholdAdditionalData;
+import com.cardiodata.json.AerobicThresholdData;
+import com.cardiodata.json.AnaerobicThresholdAdditionalData;
+import com.cardiodata.json.AnaerobicThresholdData;
+import com.cardiodata.json.HeightAdditionalData;
+import com.cardiodata.json.HeightData;
+import com.cardiodata.json.WeightAdditionalData;
+import com.cardiodata.json.WeightData;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +23,7 @@ import javax.persistence.Id;
  */
 @Entity
 public class CardioMoodSingleMeasurement implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,39 +33,68 @@ public class CardioMoodSingleMeasurement implements Serializable {
     protected Long lastModificationTimestamp;
     protected Long userId;
     protected Long serverId;
-    
+
     @Column(length = 1000)
-    protected String data;
-    
-    protected String dataClassName;
-    
+    protected String dataItem;
+
+    @Enumerated(EnumType.STRING)
+    protected SingleMeasurementDataType dataType;
+
     @Column(length = 1000)
-    protected String additionalData;
-    
-    protected String additionalDataClassName;
+    protected String additionalDataItem;
+
+    @Enumerated(EnumType.STRING)
+    protected SingleMeasurementAdditionalDataType additionalDataType;
 
     protected String name;
-    
+
     @Column(length = 1000)
     protected String description;
-    
-    public CardioMoodSingleMeasurement() {
-    }
 
-    public CardioMoodSingleMeasurement(Long creationTimestamp, Long lastModificationTimestamp, Long userId, Long serverId, String data, String dataClassName, String additionalData, String additionalDataClassName, String name, String description) {
+    public CardioMoodSingleMeasurement(Long creationTimestamp, Long lastModificationTimestamp, Long userId, Long serverId, String dataItem, SingleMeasurementDataType dataType, String additionalDataItem, SingleMeasurementAdditionalDataType additionalDataType, String name, String description) {
         this.creationTimestamp = creationTimestamp;
         this.lastModificationTimestamp = lastModificationTimestamp;
         this.userId = userId;
         this.serverId = serverId;
-        this.data = data;
-        this.dataClassName = dataClassName;
-        this.additionalData = additionalData;
-        this.additionalDataClassName = additionalDataClassName;
+        this.dataItem = dataItem;
+        this.dataType = dataType;
+        this.additionalDataItem = additionalDataItem;
+        this.additionalDataType = additionalDataType;
         this.name = name;
         this.description = description;
     }
+
     
+
+    public enum SingleMeasurementAdditionalDataType {
+        WEIGHT(WeightAdditionalData.class), HEIGHT(HeightAdditionalData.class), AEROBIC_THRESHOLD(AerobicThresholdAdditionalData.class), ANAEROBIC_THRESHOLD(AnaerobicThresholdAdditionalData.class);
+        
+        private Class clazz;
+        
+        public Class getDeserializationClass(){
+            return this.clazz;
+        }
+        
+        private SingleMeasurementAdditionalDataType(Class clazz){
+            this.clazz = clazz;
+        }
+
+    }
     
+    public enum SingleMeasurementDataType {
+        WEIGHT(WeightData.class), HEIGHT(HeightData.class), AEROBIC_THRESHOLD(AerobicThresholdData.class), ANAEROBIC_THRESHOLD(AnaerobicThresholdData.class);
+        
+        private Class clazz;
+        
+        public Class getDeserializationClass(){
+            return this.clazz;
+        }
+        
+        private SingleMeasurementDataType(Class clazz){
+            this.clazz = clazz;
+        }
+
+    }
 
     public String getName() {
         return name;
@@ -73,8 +112,6 @@ public class CardioMoodSingleMeasurement implements Serializable {
         this.description = description;
     }
 
-    
-    
     public Long getCreationTimestamp() {
         return creationTimestamp;
     }
@@ -107,40 +144,41 @@ public class CardioMoodSingleMeasurement implements Serializable {
         this.serverId = serverId;
     }
 
-    public String getData() {
-        return data;
+    public String getDataItem() {
+        return dataItem;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setDataItem(String dataItem) {
+        this.dataItem = dataItem;
     }
 
-    public String getDataClassName() {
-        return dataClassName;
+    public SingleMeasurementDataType getDataType() {
+        return dataType;
     }
 
-    public void setDataClassName(String dataClassName) {
-        this.dataClassName = dataClassName;
+    public void setDataType(SingleMeasurementDataType dataType) {
+        this.dataType = dataType;
     }
 
-    public String getAdditionalData() {
-        return additionalData;
+    public String getAdditionalDataItem() {
+        return additionalDataItem;
     }
 
-    public void setAdditionalData(String additionalData) {
-        this.additionalData = additionalData;
+    public void setAdditionalDataItem(String additionalDataItem) {
+        this.additionalDataItem = additionalDataItem;
     }
 
-    public String getAdditionalDataClassName() {
-        return additionalDataClassName;
+    public SingleMeasurementAdditionalDataType getAdditionalDataType() {
+        return additionalDataType;
     }
 
-    public void setAdditionalDataClassName(String additionalDataClassName) {
-        this.additionalDataClassName = additionalDataClassName;
+    public void setAdditionalDataType(SingleMeasurementAdditionalDataType additionalDataType) {
+        this.additionalDataType = additionalDataType;
     }
+
     
-    
-    
+
+
     public Long getId() {
         return id;
     }
@@ -173,5 +211,5 @@ public class CardioMoodSingleMeasurement implements Serializable {
     public String toString() {
         return "com.cardiodata.core.jpa.CardioMoodSingleMeasurement[ id=" + id + " ]";
     }
-    
+
 }

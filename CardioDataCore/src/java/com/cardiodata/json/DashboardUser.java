@@ -4,7 +4,6 @@ import com.cardiodata.core.jpa.User;
 import java.util.List;
 
 /**
- *
  * @author sabir
  */
 public class DashboardUser extends User {

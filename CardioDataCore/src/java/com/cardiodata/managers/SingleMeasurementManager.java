@@ -31,7 +31,7 @@ public class SingleMeasurementManager implements SingleMeasurementManagerLocal {
     }
 
     @Override
-    public CardioMoodSingleMeasurement createSingleMeasurement(Long userId, Long serverId, String name, String description, Long creationTimestamp, String data, String dataClassName, String additionalData, String additionalDataClassName) throws CardioDataException {
+    public CardioMoodSingleMeasurement createSingleMeasurement(Long userId, Long serverId, String name, String description, Long creationTimestamp, String dataItem, CardioMoodSingleMeasurement.SingleMeasurementDataType dataType, String additionalDataItem, CardioMoodSingleMeasurement.SingleMeasurementAdditionalDataType additionalDataType) throws CardioDataException {
         if (userId == null){
             throw new CardioDataException("userId is null");
         }
@@ -44,7 +44,7 @@ public class SingleMeasurementManager implements SingleMeasurementManagerLocal {
         }
         
         Long lastModificationT = 0L;
-        CardioMoodSingleMeasurement m = new CardioMoodSingleMeasurement(creationTimestamp, lastModificationT, userId, serverId, data, dataClassName, additionalData, additionalDataClassName, name, description);
+        CardioMoodSingleMeasurement m = new CardioMoodSingleMeasurement(creationTimestamp, lastModificationT, userId, serverId, dataItem, dataType, additionalDataItem, additionalDataType, name, description);
         return em.merge(m);
         
     }
@@ -62,7 +62,7 @@ public class SingleMeasurementManager implements SingleMeasurementManagerLocal {
         }
         if (newM.getId() == null){
             Long ctm = (newM.getCreationTimestamp() == null) ? System.currentTimeMillis() : newM.getCreationTimestamp();
-            CardioMoodSingleMeasurement m = new CardioMoodSingleMeasurement(ctm, 0L, newM.getUserId(), newM.getServerId(), newM.getData(), newM.getDataClassName(), newM.getAdditionalData(), newM.getAdditionalDataClassName(), newM.getName(), newM.getDescription());
+            CardioMoodSingleMeasurement m = new CardioMoodSingleMeasurement(ctm, 0L, newM.getUserId(), newM.getServerId(), newM.getDataItem(), newM.getDataType(), newM.getAdditionalDataItem(), newM.getAdditionalDataType(), newM.getName(), newM.getDescription());
             return em.merge(m);
         }
         CardioMoodSingleMeasurement sm = getSingleMeasurementById(newM.getId());
@@ -75,10 +75,10 @@ public class SingleMeasurementManager implements SingleMeasurementManagerLocal {
             throw new CardioDataException("measurement was updated on server", ResponseConstants.SESSION_IS_MODIFIED_ON_SERVER_CODE);
         }
         
-        sm.setData(newM.getData());
-        sm.setDataClassName(newM.getDataClassName());
-        sm.setAdditionalData(newM.getAdditionalData());
-        sm.setAdditionalDataClassName(newM.getAdditionalDataClassName());
+        sm.setDataItem(newM.getDataItem());
+        sm.setDataType(newM.getDataType());
+        sm.setAdditionalDataItem(newM.getAdditionalDataItem());
+        sm.setAdditionalDataType(newM.getAdditionalDataType());
         sm.setName(newM.getName());
         sm.setDescription(newM.getDescription());
         return em.merge(sm);

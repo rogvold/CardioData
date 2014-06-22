@@ -15,7 +15,7 @@ public interface SingleMeasurementManagerLocal {
     
     public CardioMoodSingleMeasurement getSingleMeasurementById(Long mId) throws CardioDataException;
     
-    public CardioMoodSingleMeasurement createSingleMeasurement(Long userId, Long serverId, String name, String description, Long creationTimestamp, String data, String dataClassName, String additionalData, String additionalDataClassName) throws CardioDataException;
+    public CardioMoodSingleMeasurement createSingleMeasurement(Long userId, Long serverId, String name, String description, Long creationTimestamp, String dataItem, CardioMoodSingleMeasurement.SingleMeasurementDataType dataType, String additionalDataItem, CardioMoodSingleMeasurement.SingleMeasurementAdditionalDataType additionalDataType) throws CardioDataException;
     
     public CardioMoodSingleMeasurement updateSingleMeasurement(CardioMoodSingleMeasurement newM) throws CardioDataException;
     
@@ -26,5 +26,7 @@ public interface SingleMeasurementManagerLocal {
     public List<CardioMoodSingleMeasurement> getMeasurementsOfUser(Long userId, Long serverId, String dataClassName) throws CardioDataException;
     
     public CardioMoodSingleMeasurement getLastSingleMeasurement(Long userId, Long serverId, String dataClassName) throws CardioDataException;
+    
+    
     
 }
