@@ -23,9 +23,9 @@ public interface SingleMeasurementManagerLocal {
     
     public void deleteSingleMeasurement(Long mId) throws CardioDataException;
     
-    public List<CardioMoodSingleMeasurement> getMeasurementsOfUser(Long userId, Long serverId, String dataClassName) throws CardioDataException;
+    public List<CardioMoodSingleMeasurement> getMeasurementsOfUser(Long userId, Long serverId, CardioMoodSingleMeasurement.SingleMeasurementDataType dataType) throws CardioDataException;
     
-    public CardioMoodSingleMeasurement getLastSingleMeasurement(Long userId, Long serverId, String dataClassName) throws CardioDataException;
+    public CardioMoodSingleMeasurement getLastSingleMeasurement(Long userId, Long serverId, CardioMoodSingleMeasurement.SingleMeasurementDataType dataType) throws CardioDataException;
     
     
     

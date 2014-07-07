@@ -230,6 +230,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         }
 
         session.setName(cw.getName());
+        session.setServerId(cw.getServerId());
         session.setDescription(cw.getDescription());
         session.setDataClassName(cw.getDataClassName());
         session.setCreationTimestamp(cw.getCreationTimestamp());

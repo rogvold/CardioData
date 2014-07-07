@@ -96,7 +96,7 @@ public class SingleMeasurementManager implements SingleMeasurementManagerLocal {
         em.remove(m);
     }
 
-    private List<CardioMoodSingleMeasurement> getMeasurementsOfUser(Long userId, Long serverId, String className, Integer limit) throws CardioDataException{
+    private List<CardioMoodSingleMeasurement> getMeasurementsOfUser(Long userId, Long serverId, CardioMoodSingleMeasurement.SingleMeasurementDataType dataType, Integer limit) throws CardioDataException{
         if (userId == null){
             throw new CardioDataException("userId is null");
         }
@@ -106,10 +106,10 @@ public class SingleMeasurementManager implements SingleMeasurementManagerLocal {
                     .setParameter("userId", userId)
                     .setParameter("serverId", serverId);
         }
-        if (className != null){
-            q = em.createQuery("select c from CardioMoodSingleMeasurement c where c.userId = :userId and and c.serverId=:serverId and c.dataClassName=:className order by c.creationTimestamp desc")
+        if (dataType != null){
+            q = em.createQuery("select c from CardioMoodSingleMeasurement c where c.userId = :userId and c.serverId=:serverId and c.dataType=:dataType order by c.creationTimestamp desc")
                     .setParameter("serverId", serverId)
-                    .setParameter("className", className)
+                    .setParameter("dataType", dataType)
                     .setParameter("userId", userId);
         }
         if (limit != null){
@@ -124,14 +124,14 @@ public class SingleMeasurementManager implements SingleMeasurementManagerLocal {
     }
     
     @Override
-    public List<CardioMoodSingleMeasurement> getMeasurementsOfUser(Long userId, Long serverId, String className) throws CardioDataException {
-        return getMeasurementsOfUser(userId, serverId, className, null);
+    public List<CardioMoodSingleMeasurement> getMeasurementsOfUser(Long userId, Long serverId, CardioMoodSingleMeasurement.SingleMeasurementDataType dataType) throws CardioDataException {
+        return getMeasurementsOfUser(userId, serverId, dataType, null);
     }
     
     
     @Override
-    public CardioMoodSingleMeasurement getLastSingleMeasurement(Long userId, Long serverId, String dataClassName) throws CardioDataException {
-        List<CardioMoodSingleMeasurement> list = getMeasurementsOfUser(userId, serverId, dataClassName, 1);
+    public CardioMoodSingleMeasurement getLastSingleMeasurement(Long userId, Long serverId, CardioMoodSingleMeasurement.SingleMeasurementDataType dataType) throws CardioDataException {
+        List<CardioMoodSingleMeasurement> list = getMeasurementsOfUser(userId, serverId, dataType, 1);
         if (list.isEmpty()){
             return null;
         }

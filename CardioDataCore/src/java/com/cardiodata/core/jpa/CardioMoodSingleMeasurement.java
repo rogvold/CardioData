@@ -64,6 +64,10 @@ public class CardioMoodSingleMeasurement implements Serializable {
         this.description = description;
     }
 
+    public CardioMoodSingleMeasurement() {
+        
+    }
+
     
 
     public enum SingleMeasurementAdditionalDataType {

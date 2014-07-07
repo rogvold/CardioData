@@ -68,17 +68,17 @@ public class SingleMeasurementResource {
      * @param token
      * @param userId
      * @param serverId - optional
-     * @param className - optional
+     * @param dataType - optional
      * @return 
      */
     @POST
     @Produces("application/json")
     @Path("getSingleMeasurementsOfUser")
     public Response getSingleMeasurementsOfUser(@FormParam("token") String token, 
-            @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("className") String className) {
+            @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("dataType") String dataType) {
         try {
             tokenMan.assertToken(userId, token);
-            List<CardioMoodSingleMeasurement> list = sMan.getMeasurementsOfUser(userId, serverId, className);
+            List<CardioMoodSingleMeasurement> list = sMan.getMeasurementsOfUser(userId, serverId, CardioMoodSingleMeasurement.SingleMeasurementDataType.valueOf(dataType));
             JsonResponse<List<CardioMoodSingleMeasurement>> jr = new JsonResponse<List<CardioMoodSingleMeasurement>>(ResponseConstants.OK, list);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
@@ -90,10 +90,10 @@ public class SingleMeasurementResource {
     @Produces("application/json")
     @Path("getLastSingleMeasurementOfUser")
     public Response getLastSingleMeasurementOfUser(@FormParam("token") String token, 
-            @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("className") String className) {
+            @FormParam("userId") Long userId, @FormParam("serverId") Long serverId, @FormParam("dataType") String dataType) {
         try {
             tokenMan.assertToken(userId, token);
-            CardioMoodSingleMeasurement c = sMan.getLastSingleMeasurement(userId, serverId, className);
+            CardioMoodSingleMeasurement c = sMan.getLastSingleMeasurement(userId, serverId, CardioMoodSingleMeasurement.SingleMeasurementDataType.valueOf(dataType));
             JsonResponse<CardioMoodSingleMeasurement> jr = new JsonResponse<CardioMoodSingleMeasurement>(ResponseConstants.OK, c);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
