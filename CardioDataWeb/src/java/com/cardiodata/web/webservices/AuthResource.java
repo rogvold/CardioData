@@ -2,6 +2,7 @@ package com.cardiodata.web.webservices;
 
 import com.cardiodata.core.jpa.ApiToken;
 import com.cardiodata.core.jpa.User;
+import com.cardiodata.core.jpa.UserAccount;
 import com.cardiodata.enums.AccountTypeEnum;
 import com.cardiodata.exceptions.CardioDataException;
 import com.cardiodata.json.*;
@@ -67,6 +68,34 @@ public class AuthResource {
             }
             User u = userMan.registerTrainer(AccountTypeEnum.EMAIL, email, password);
             JsonResponse<User> jr = new JsonResponse<User>(ResponseConstants.OK, u);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
+    @POST
+    @Produces("application/json")
+    @Path("createUserAccount")
+    public Response createUserAccount(@FormParam("token") String token, @FormParam("userId") Long userId, @FormParam("login") String login,  @FormParam("type") AccountTypeEnum type) {
+        try {
+            tokenMan.assertToken(userId, token);
+            UserAccount acc = userMan.createUserAccount(type, userId, login, null);
+            JsonResponse<UserAccount> jr = new JsonResponse<UserAccount>(ResponseConstants.OK, acc);
+            return SimpleResponseWrapper.getJsonResponseCORS(jr);
+        } catch (CardioDataException e) {
+            return CardioDataExceptionWrapper.wrapExceptionCORS(e);
+        }
+    }
+    
+    @POST
+    @Produces("application/json")
+    @Path("changePassword")
+    public Response changePassword(@FormParam("token") String token, @FormParam("userId") Long userId,  @FormParam("type") AccountTypeEnum type, @FormParam("newPassword") String newPassword) {
+        try {
+            tokenMan.assertToken(userId, token);
+            UserAccount acc = userMan.changePassword(userId, type, newPassword);
+            JsonResponse<UserAccount> jr = new JsonResponse<UserAccount>(ResponseConstants.OK, acc);
             return SimpleResponseWrapper.getJsonResponseCORS(jr);
         } catch (CardioDataException e) {
             return CardioDataExceptionWrapper.wrapExceptionCORS(e);

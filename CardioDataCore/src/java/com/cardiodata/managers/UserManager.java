@@ -33,7 +33,9 @@ import javax.persistence.Query;
  */
 @Stateless
 public class UserManager implements UserManagerLocal {
-
+    
+    public static final int MIN_PASSWORD_LENGTH = 4;
+    
     @PersistenceContext(unitName = "CardioDataCorePU")
     EntityManager em;
     @EJB
@@ -123,6 +125,20 @@ public class UserManager implements UserManagerLocal {
         }
         List<UserAccount> list = q.getResultList();
         if (list == null || list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+    
+    private UserAccount getUserAccount(Long userId, AccountTypeEnum type) throws CardioDataException{
+        if (userId == null){
+            throw new CardioDataException("userId is null");
+        }
+        if (type == null){
+            throw new CardioDataException("user account type is not specified");
+        }
+        List<UserAccount> list = em.createQuery("select ua from UserAccount ua where ua.userId=:userId and ua.accountType=:aType").setParameter("userId", userId).setParameter("aType", type).getResultList();
+        if (list == null || list.isEmpty()){
             return null;
         }
         return list.get(0);
@@ -330,15 +346,42 @@ public class UserManager implements UserManagerLocal {
     }
 
     @Override
-    public UserAccount getUserAccountByUserId(Long userId) throws CardioDataException {
+    public UserAccount getUserEmailAccountByUserId(Long userId) throws CardioDataException {
+        return getUserAccount(userId, AccountTypeEnum.EMAIL);
+    }
+
+    @Override
+    public UserAccount createUserAccount(AccountTypeEnum type, Long userId, String login, String password) throws CardioDataException {
         if (userId == null){
             throw new CardioDataException("userId is null");
         }
-        List<UserAccount> list = em.createQuery("select ac from UserAccount ac where ac.userId=:userId").setParameter("userId", userId).setMaxResults(1).getResultList();
-        if (list == null || list.isEmpty()){
-            return null;
+        if (login == null || "".equals(login)){
+            throw new CardioDataException("login is empty");
         }
-        return list.get(0);
+        List<UserAccount> list = em.createQuery("select ua from UserAccount ua where ua.userId=:userId and ua.accountType=:aType").setParameter("userId", userId).setParameter("aType", type).getResultList();
+        if (list != null && !list.isEmpty()){
+            throw new CardioDataException("user account " + type.toString() + " has already been created for this user");
+        }else{
+            UserAccount acc = new UserAccount(login, password, type, userId);
+            return em.merge(acc);
+        }
+        
+    }
+
+    @Override
+    public UserAccount changePassword(Long userId, AccountTypeEnum type, String newPassword) throws CardioDataException {
+        UserAccount acc = getUserAccount(userId, type);
+        if (acc == null){
+            throw new CardioDataException("user has no " + type + " account");
+        }
+        if (newPassword == null || "".equals(newPassword)){
+            throw new CardioDataException("new password is empty");
+        }
+        if (newPassword.length() < MIN_PASSWORD_LENGTH){
+            throw new CardioDataException("new password is too short");
+        }
+        acc.setPassword(newPassword);
+        return em.merge(acc);
     }
 
 }

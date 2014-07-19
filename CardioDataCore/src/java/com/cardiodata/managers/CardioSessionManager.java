@@ -443,7 +443,7 @@ public class CardioSessionManager implements CardioSessionManagerLocal {
         String firstName = u.getFirstName();
         if (u != null){
             if ((firstName == null || "".equals(firstName)) && (u.getLastName() == null || "".equals(u.getLastName()) ) ){
-            UserAccount ac = userMan.getUserAccountByUserId(u.getId());
+            UserAccount ac = userMan.getUserEmailAccountByUserId(u.getId());
             firstName = ac.getLogin();
         }
             du.setFirstName(firstName);

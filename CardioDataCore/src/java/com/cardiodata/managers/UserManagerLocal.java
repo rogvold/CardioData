@@ -22,7 +22,11 @@ public interface UserManagerLocal {
     
     public User getUserByEmail(String email) throws CardioDataException;
     
-    public UserAccount getUserAccountByUserId(Long userId) throws CardioDataException;
+    public UserAccount createUserAccount(AccountTypeEnum type, Long userId, String login, String password) throws CardioDataException;
+    
+    public UserAccount changePassword(Long userId, AccountTypeEnum type, String newPassword) throws CardioDataException;
+    
+    public UserAccount getUserEmailAccountByUserId(Long userId) throws CardioDataException;
 
     public User registerUser(AccountTypeEnum aType, String login, String password) throws CardioDataException;
     
