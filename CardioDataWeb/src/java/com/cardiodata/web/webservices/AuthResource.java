@@ -11,15 +11,18 @@ import com.cardiodata.managers.ClientServerManagerLocal;
 import com.cardiodata.managers.UserManagerLocal;
 import com.cardiodata.utils.StringUtils;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -239,24 +242,57 @@ public class AuthResource {
     }
 
     private String makeFacebookProofPostRequest(String accessToken, String proof) throws MalformedURLException, UnsupportedEncodingException, IOException{
-        HttpClient client = new DefaultHttpClient();
-	HttpPost post = new HttpPost("https://graph.facebook.com");
-        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-	urlParameters.add(new BasicNameValuePair("access_token", accessToken));
-	urlParameters.add(new BasicNameValuePair("appsecret_proof", proof));
-	urlParameters.add(new BasicNameValuePair("batch", "[{\"method\":\"GET\", \"relative_url\":\"me\"}]"));
-        
-        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+//        HttpClient client = new DefaultHttpClient();
+//	HttpPost post = new HttpPost("https://graph.facebook.com");
+//        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+//	urlParameters.add(new BasicNameValuePair("access_token", accessToken));
+//	urlParameters.add(new BasicNameValuePair("appsecret_proof", proof));
+//	urlParameters.add(new BasicNameValuePair("batch", "[{\"method\":\"GET\", \"relative_url\":\"me\"}]"));
+//        
+//        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+// 
+//	HttpResponse response = client.execute(post);
+//        
+//        BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+// 
+//	StringBuffer result = new StringBuffer();
+//	String line = "";
+//	while ((line = rd.readLine()) != null) {
+//			result.append(line);
+//	}
+        String url = "https://graph.facebook.com";
+		URL obj = new URL(url);
+		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
  
-	HttpResponse response = client.execute(post);
-        
-        BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		//add reuqest header
+		con.setRequestMethod("POST");
+		//con.setRequestProperty("User-Agent", USER_AGENT);
+		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
  
-	StringBuffer result = new StringBuffer();
-	String line = "";
-	while ((line = rd.readLine()) != null) {
-			result.append(line);
-	}
+		String urlParameters = "access_token=" + accessToken +"&appsecret_proof=" + proof +"&batch=[{\"method\":\"GET\", \"relative_url\":\"me\"}]";
+ 
+		// Send post request
+		con.setDoOutput(true);
+		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+		wr.writeBytes(urlParameters);
+		wr.flush();
+		wr.close();
+ 
+		int responseCode = con.getResponseCode();
+		System.out.println("\nSending 'POST' request to URL : " + url);
+		System.out.println("Post parameters : " + urlParameters);
+		System.out.println("Response Code : " + responseCode);
+ 
+		BufferedReader in = new BufferedReader(
+		        new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+ 
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close();
+                String line = response.toString();
         return line;
       }
     
