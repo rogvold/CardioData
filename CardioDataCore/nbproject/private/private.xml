@@ -6,8 +6,11 @@
         <group>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/json/TokenManager.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/json/AnaerobicThresholdAdditionalData.java</file>
+            <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/managers/UserManagerLocal.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/json/HeightAdditionalData.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/json/CardioMoodSingleMeasurementData.java</file>
+            <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/enums/AccountTypeEnum.java</file>
+            <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/managers/UserManager.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/managers/CardioSessionManagerLocal.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/json/DashboardUser.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/json/WeightAdditionalData.java</file>
@@ -16,6 +19,8 @@
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/json/HeightData.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/core/jpa/CardioDataItem.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/json/WeightData.java</file>
+            <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/utils/StringUtils.java</file>
+            <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/json/TokenManagerLocal.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/managers/SingleMeasurementManagerLocal.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/managers/CardioSessionManager.java</file>
             <file>file:/Users/sabir/Documents/GitHub/CardioData/CardioDataCore/src/java/com/cardiodata/core/jpa/CardioMoodSingleMeasurement.java</file>

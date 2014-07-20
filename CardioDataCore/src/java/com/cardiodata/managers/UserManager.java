@@ -393,8 +393,6 @@ public class UserManager implements UserManagerLocal {
             u.setLastName(lastName);
             u = em.merge(u);
             UserAccount acc = createUserAccount(AccountTypeEnum.EMAIL, u.getId(), email, password);
-        }else{
-            u = loginUser(AccountTypeEnum.EMAIL, email, password);
         }
         
         return u;
