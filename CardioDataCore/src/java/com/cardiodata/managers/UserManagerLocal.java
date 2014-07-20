@@ -24,6 +24,10 @@ public interface UserManagerLocal {
     
     public UserAccount createUserAccount(AccountTypeEnum type, Long userId, String login, String password) throws CardioDataException;
     
+    public User getLazyUserByEmailAndPassword(String email, String password, String firstName, String lastName) throws CardioDataException;
+    
+    public UserAccount getLazyUserAccount(AccountTypeEnum type, Long userId, String login, String password) throws CardioDataException;
+    
     public UserAccount changePassword(Long userId, AccountTypeEnum type, String newPassword) throws CardioDataException;
     
     public UserAccount getUserEmailAccountByUserId(Long userId) throws CardioDataException;

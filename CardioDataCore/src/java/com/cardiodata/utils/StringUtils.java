@@ -3,18 +3,25 @@ package com.cardiodata.utils;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.w3c.dom.Document;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -221,5 +228,24 @@ public class StringUtils {
         String s = sb.toString();
         s = "[" + s + "]";
         return s;
+    }
+    
+    public static String hashMac(String text, String secretKey) throws SignatureException {
+     final String HASH_ALGORITHM = "HmacSHA256";
+     try {
+      Key sk = new SecretKeySpec(secretKey.getBytes(), HASH_ALGORITHM);
+      Mac mac = Mac.getInstance(sk.getAlgorithm());
+      mac.init(sk);
+      final byte[] hmac = mac.doFinal(text.getBytes());
+      return toHexString(hmac);
+     } catch (NoSuchAlgorithmException e1) {
+      // throw an exception or pick a different encryption method
+      throw new SignatureException(
+        "error building signature, no such algorithm in device "
+          + HASH_ALGORITHM);
+     } catch (InvalidKeyException e) {
+      throw new SignatureException(
+        "error building signature, invalid key " + HASH_ALGORITHM);
+     }
     }
 }

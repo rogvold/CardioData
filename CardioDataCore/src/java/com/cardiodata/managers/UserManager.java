@@ -384,4 +384,36 @@ public class UserManager implements UserManagerLocal {
         return em.merge(acc);
     }
 
+    @Override
+    public User getLazyUserByEmailAndPassword(String email, String password, String firstName, String lastName) throws CardioDataException {
+        User u = getUserByEmail(email);
+        if (u == null){
+            u = registerUser(AccountTypeEnum.EMAIL, email, password);
+            u.setFirstName(firstName);
+            u.setLastName(lastName);
+            u = em.merge(u);
+            UserAccount acc = createUserAccount(AccountTypeEnum.EMAIL, u.getId(), email, password);
+        }else{
+            u = loginUser(AccountTypeEnum.EMAIL, email, password);
+        }
+        
+        return u;
+        
+    }
+
+    @Override
+    public UserAccount getLazyUserAccount(AccountTypeEnum type, Long userId, String login, String password) throws CardioDataException {
+        if (type == null){
+            throw new CardioDataException("account type is not specified");
+        }
+        if (login == null){
+            throw new CardioDataException("login is not specified");
+        }
+        UserAccount acc = getAccount(type, login);
+        if (acc == null){
+            acc = createUserAccount(type, userId, login, password);
+        }
+        return acc;
+    }
+
 }
